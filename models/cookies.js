@@ -3,7 +3,7 @@ var mongoose = require('mongoose');
 
 // define the schema for our user model
 var cookiesSchema = mongoose.Schema({
-    cookies: {},
+    cookies: String,
     sessionID: String
 }, { timestamps: { createdAt: 'created_at' } });
 

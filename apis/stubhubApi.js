@@ -16,18 +16,7 @@ class stubhubApi {
 
     async checkLogin() {
         if (sessionID == '') {
-            //get session ID and cookie for db
-            let cookieData = await getCookieData();
-            if (cookieData && cookieData.sessionID) {
-                sessionID = cookieData.sessionID;
-                jar = cookieData.cookies;
-                let profileHTML = await getProfilePage();
-                //parse and check login
-                const $ = cheerio.load(profileHTML);
-                if ($('.profile-name')) {
-                    return true;
-                } else return false;
-            } else return false;
+            return false;
         } else {
             let profileHTML = await getProfilePage();
             //parse and check login
@@ -66,10 +55,7 @@ class stubhubApi {
             let data = JSON.parse(response);
             if (data.login && data.login.session_id) {
                 sessionID = data.login.session_id;
-                //save cookie
-                saveCookie();
                 await initSession(data.login.session_id);
-                console.log('logged from email');
                 return 'Loggedin';
             } else {
                 return 'Unlogged';
@@ -217,25 +203,6 @@ async function getProfilePage() {
             resolve(body);
         });
     })
-}
-
-async function getCookieData() {
-    return new Promise((resolve, reject) => {
-        CookiesModel.findOne({}, (err, cookie) => {
-            if (err) reject(err);
-            resolve(cookie);
-        });
-    })
-}
-
-async function saveCookie() {
-    CookiesModel.deleteMany({}, (err, data) => {
-        let newCookies = new CookiesModel();
-        newCookies.cookies = jar;
-        newCookies.sessionID = sessionID;
-        newCookies.save((error) => { });
-    })
-
 }
 
 module.exports = stubhubApi;
