@@ -20,8 +20,7 @@ class stubhubApi {
             let cookieData = await getCookieData();
             if (cookieData && cookieData.sessionID) {
                 sessionID = cookieData.sessionID;
-                let cookiedb = cookieData.cookies[cookieData.cookies.length - 1].cookie
-                let cookie = request.cookie(cookiedb)
+                let cookie = request.cookie(cookieData.cookies)
                 let url = 'https://www.stubhub.com/'
                 jar.setCookie(cookie, url);
                 let profileHTML = await getProfilePage();
@@ -65,7 +64,6 @@ class stubhubApi {
 
     async login() {
         let response = await loginWithEmail();
-        console.log(response);
         if (response && response != 403) {
             let data = JSON.parse(response);
             if (data.login && data.login.session_id) {

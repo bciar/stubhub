@@ -30,7 +30,7 @@ async function siteLogin() {
         await stubhub.openSite();
         let response = await stubhub.login();
         return response;
-    }
+    } else return 'Loggedin';
 }
 
 
