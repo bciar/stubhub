@@ -17,11 +17,17 @@ class mainController {
         }
     }
     
+    async loginTest(req, res) {
+        await stubhub.openSite();
+        let loginStatus = await stubhub.Testlogin();
+        res.send(loginStatus);
+    }
 }
 
 async function siteLogin() {
     let loginStatus = await stubhub.checkLogin();
     if(loginStatus == false) {
+        await stubhub.openSite();
         let response = await stubhub.login();
         return response;
     }

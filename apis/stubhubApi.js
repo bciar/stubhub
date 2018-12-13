@@ -65,9 +65,8 @@ class stubhubApi {
 
     async login() {
         let response = await loginWithEmail();
+        console.log(response);
         if (response && response != 403) {
-            console.log('-----------------------login data-----------------------')
-            console.log(response)
             let data = JSON.parse(response);
             if (data.login && data.login.session_id) {
                 sessionID = data.login.session_id;
@@ -81,6 +80,11 @@ class stubhubApi {
         } else {
             return 'Unlogged';
         }
+    }
+
+    async Testlogin() {
+        let response = await loginWithEmail();
+        return response;
     }
 
     async getEventsById(eventID) {
@@ -155,11 +159,13 @@ async function loginWithEmail() {
         url: 'https://iam.stubhub.com/login',
         headers:
         {
+            'authority': 'www.stubhub.com',
             'accept-encoding': 'gzip, deflate, br',
             'accept-language': 'en-us',
             'content-type': 'application/x-www-form-urlencoded',
-            accept: 'application/json',
-            referer: 'https://www.stubhub.com/my/profile/',
+            'Host': 'iam.stubhub.com',
+            'accept': 'application/json',
+            'referer': 'https://www.stubhub.com/my/profile/',
             'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.80 Safari/537.36'
         },
         form: { username: 'tktundrgrnd@gmail.com', password: 'Tickets345' },
