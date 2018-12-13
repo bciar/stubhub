@@ -72,7 +72,7 @@ class stubhubApi {
                 //save cookie
                 saveCookie();
                 await initSession(data.login.session_id);
-                console.log('logged');
+                console.log('logged from email');
                 return 'Loggedin';
             } else {
                 return 'Unlogged';
