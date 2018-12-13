@@ -20,9 +20,7 @@ class stubhubApi {
             let cookieData = await getCookieData();
             if (cookieData && cookieData.sessionID) {
                 sessionID = cookieData.sessionID;
-                let cookie = request.cookie(cookieData.cookies)
-                let url = 'https://www.stubhub.com/'
-                jar.setCookie(cookie, url);
+                jar = cookieData.cookies;
                 let profileHTML = await getProfilePage();
                 //parse and check login
                 const $ = cheerio.load(profileHTML);
@@ -92,7 +90,7 @@ class stubhubApi {
             url: url,
             method: 'GET',
             headers: {
-                'accept': 'application/json',
+                'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
                 'referer': 'https://www.stubhub.com/my/profile/',
                 'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.80 Safari/537.36'
             },
@@ -231,10 +229,9 @@ async function getCookieData() {
 }
 
 async function saveCookie() {
-    var cookies = jar.getCookies('https://www.stubhub.com/');
     CookiesModel.deleteMany({}, (err, data) => {
         let newCookies = new CookiesModel();
-        newCookies.cookies = cookies.toString();
+        newCookies.cookies = jar;
         newCookies.sessionID = sessionID;
         newCookies.save((error) => { });
     })
