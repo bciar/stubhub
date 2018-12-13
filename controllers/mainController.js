@@ -9,9 +9,13 @@ class mainController {
 
     async getEventDetail(req, res) {
         await stubhub.openSite();
-        console.log('Site Opened')
-        await stubhub.login();
-        res.send("ok");
+        let login_response = await stubhub.login();
+        if(login_response == 'Loggedin') {
+            let eventData = await stubhub.getEventsById('103926521');
+            res.json(eventData);
+        } else {
+            res.send("Login Failed");
+        }
     }
     
 }
