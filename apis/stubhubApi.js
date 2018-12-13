@@ -27,6 +27,7 @@ class stubhubApi {
                 //parse and check login
                 const $ = cheerio.load(profileHTML);
                 if ($('.profile-name')) {
+                    console.log("profile name");
                     return true;
                 } else return false;
             } else return false;
@@ -66,7 +67,6 @@ class stubhubApi {
         let response = await loginWithEmail();
         if (response && response != 403) {
             let data = JSON.parse(response);
-            console.log(data);
             if (data.login && data.login.session_id) {
                 sessionID = data.login.session_id;
                 //save cookie
@@ -88,6 +88,7 @@ class stubhubApi {
     }
 
     async getEventsById(eventID) {
+        console.log(jar);
         let url = 'https://pro.stubhub.com/shape/search/inventory/v2/seller/listings?eventId=' + eventID + '&priceType=listingPrice&sectionIdList=&pricingsummary=true&rows=25&start=0&sort=value%20desc&sectionstats=true&_type=json&_=1544540306147';
         const options = {
             url: url,
@@ -100,7 +101,7 @@ class stubhubApi {
         return new Promise((resolve, reject) => {
             request(options, (err, response, body) => {
                 if (err) reject(err);
-                resolve(body);
+                resolve(JSON.parse(body));
             });
         })
     }
