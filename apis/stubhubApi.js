@@ -66,11 +66,13 @@ class stubhubApi {
         let response = await loginWithEmail();
         if (response && response != 403) {
             let data = JSON.parse(response);
+            console.log(data);
             if (data.login && data.login.session_id) {
                 sessionID = data.login.session_id;
                 //save cookie
                 saveCookie();
                 await initSession(data.login.session_id);
+                console.log('logged');
                 return 'Loggedin';
             } else {
                 return 'Unlogged';
