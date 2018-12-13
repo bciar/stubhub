@@ -1,0 +1,177 @@
+<% layout('./layout/app') -%>
+<div class="row mt-5">
+    <div class="col-5">
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#filterModal">
+            Download CSV
+        </button>
+    </div>
+    <div class="col-7">
+        <div class="col-5 float-left">
+            <input type="text" class="form-control" placeholder="Enter event id here" id="singleEventInput" style="min-width:200px;">
+        </div>
+        <button class="btn btn-primary" id="SaveSingleEvent">Add New Event</button>
+        <button type="button" class="btn btn-primary float-right" data-toggle="modal" data-target="#uploadModal">Upload
+            events from csv</button>
+    </div>
+</div>
+
+<div class="row mt-3 mb-5">
+    <table id="eventTable" class="table table-striped table-bordered" cellspacing="0" width="100%">
+        <thead>
+            <th class="th-sm">Id
+            </th>
+            <th class="th-sm">Name
+            </th>
+            <th class="th-sm">Artist
+            </th>
+            <th class="th-sm">Venue
+            </th>
+            <th class="th-sm">
+                Action
+            </th>
+        </thead>
+        <tbody>
+            <% for(let i = 0; i < events.length; i++) { let event = events[i]; %>
+            <tr>
+                <td>
+                    <%=event.eventID%>
+                </td>
+                <td style="min-width: 200px !important;">
+                    <%=event.name%>
+                </td>
+                <td>
+                    <%=event.artist%>
+                </td>
+                <td>
+                    <%=event.venue.name%>
+                </td>
+                <td style="min-width:135px;">
+                    <a href="<%=event.url%>" target="_blank"><button class="btn btn-success" title="Visit Site"><i
+                                class="fas fa-location-arrow"></i></button></a>
+                    <a href="/tickets/<%=event.id%>"><button class="btn btn-success" title="View Tickets"><i class="fas fa-align-justify"></i></button></a>
+                    <button class="btn btn-danger" onclick="removeEvent('<%=event.eventID%>')" title="Delete"><i class="far fa-trash-alt"></i></button>
+                </td>
+            </tr>
+            <% } %>
+        </tbody>
+    </table>
+</div>
+<!-- Modal -->
+<div class="modal fade" id="filterModal" tabindex="-1" role="dialog" aria-labelledby="filterModal" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Filter and Download</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-12">
+                        <label for="filter">Filter by artist name</label>
+                        <select name="filter" id="filter" class="form-control select2-multiple" multiple="multiple">
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="downloadCSV">Download</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="uploadModal" tabindex="-1" role="dialog" aria-labelledby="uploadModal" aria-hidden="true">
+    <form action="/events/uploadcsv" method="POST" enctype="multipart/form-data" onsubmit="showloading();$('#uploadModal').modal('toggle');">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Upload events from csv</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-12">
+                            <label for="filter">Select File</label>
+                            <input type="file" name="file" class="form-control" accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+                                required>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Upload</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script src="//cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
+<script>
+    $(function () {
+        showloading();
+        $.ajax({
+            url: '/getArtistNames',
+            method: 'GET',
+            success: function (res) {
+                endloading();
+                let html = '';
+                res.forEach(row => {
+                    html = html + '<option value="' + row + '">' + row + '</option>';
+                });
+                $('#filter').html(html);
+                //initialize select2
+                $(".select2-multiple").select2({
+                    theme: "bootstrap",
+                    placeholder: "Select artist name(s)",
+                    maximumSelectionSize: 10,
+                    containerCssClass: ':all:'
+                });
+            }
+        });
+        $('#eventTable').DataTable({ responsive: true });
+        $('.dataTables_wrapper').attr('style', 'width: 100%;');
+        $('#downloadCSV').click(function () {
+            let data = { names: $('#filter').val() };
+            showloading();
+            window.location.href = '/downloadcsv?filter=' + JSON.stringify(data);
+            $('#filterModal').modal('toggle');
+            setTimeout(() => {
+                endloading();
+            }, 3000);
+        });
+
+        $('#SaveSingleEvent').click(() => {
+
+            let id = $('#singleEventInput').val();
+            if (id == '' || id.length != 16) {
+                $('#singleEventInput').focus();
+            } else {
+                showloading();
+                //save event
+                $.ajax({
+                    url: '/addEvent',
+                    method: 'POST',
+                    data: {
+                        eventID: id
+                    },
+                    success: function (res) {
+                        endloading();
+                        location.href = '/events';
+                    }
+                });
+            }
+        });
+    })
+    function removeEvent(eventID) {
+        if (confirm("Are you sure to remove this event?")) {
+            location.href = '/events/remove/' + eventID;
+        }
+    }
+
+</script>

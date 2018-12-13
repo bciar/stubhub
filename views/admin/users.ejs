@@ -1,0 +1,88 @@
+<% layout('./layout/admin') -%>
+
+<div class="row mt-5 mb-5">
+  <div class="col-12">
+    <p>Send invitation to your friend to login your site.</p>
+  </div>
+  <div class="col-12">
+    <input type="text" name="invitationEmail" id="invitationEmail" value="" class="form-control" style="max-width: 300px; float:left;margin-right: 10px;">
+    <button class="btn btn-success" id="invitationBtn">Send Invitation</button>
+  </div>
+</div>
+
+<div class="row mt-3 mb-5">
+  <table id="usersTable" class="table table-striped table-bordered" cellspacing="0" width="100%">
+    <thead>
+      <th class="th-sm">No
+        <i class="fa fa-sort float-right" aria-hidden="true"></i>
+      </th>
+      <th class="th-sm">Email
+        <i class="fa fa-sort float-right" aria-hidden="true"></i>
+      </th>
+      <th class="th-sm">Password
+        <i class="fa fa-sort float-right" aria-hidden="true"></i>
+      </th>
+      <th class="th-sm">
+        Action
+      </th>
+    </thead>
+    <tbody>
+      <% for(let i = 0; i < users.length; i++) { let user = users[i]; %>
+      <tr>
+        <td>
+          <%=i+1%>
+        </td>
+        <td>
+          <%=user.email %>
+        </td>
+        <td style="min-width: 200px !important;">
+          <%=user.password%>
+        </td>
+        <td>
+          <a href="/admin/remove/<%=user._id%>"><button class="btn btn-success">Remove</button></a>
+        </td>
+      </tr>
+      <% } %>
+    </tbody>
+  </table>
+</div>
+
+<script src="//cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
+<script>
+  $(function () {
+    $('#usersTable').DataTable({ responsive: true });
+    $('#usersTable_wrapper').attr('style', 'width: 100%;');
+    $('#invitationBtn').click(function () {
+      var invitationEmail = $('#invitationEmail').val();
+      if (invitationEmail != '' && validateEmail(invitationEmail)) {
+        $('#invitationEmail').removeClass('inputError');
+        $("#invitationBtn").prop('disabled', true);
+        $.ajax({
+          url: '/admin/sendinvitation',
+          method: 'POST',
+          data: {
+            email: invitationEmail
+          },
+          success: function (res) {
+            $('#invitationEmail').val('');
+            $("#invitationBtn").prop('disabled', false);
+            if (res.status == 'success') {
+              alert('Invitation to ' + invitationEmail + ' has been sent successfully.');
+            } else {
+              alert(res.message);
+            }
+
+          }
+        })
+      } else {
+        $('#invitationEmail').addClass('inputError');
+        $('#invitationEmail').focus();
+      }
+
+    });
+  })
+  function validateEmail($email) {
+    var emailReg = /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/;
+    return emailReg.test($email);
+  }
+</script>

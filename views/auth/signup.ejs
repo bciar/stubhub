@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Stubhub</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" media="screen" href="/css/main.css" />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-validator/0.5.3/js/bootstrapValidator.js"></script>
+</head>
+
+<body class="container">
+    <form name="login" action="/signup" method="post" class="loginform" id="signupForm">
+        <p class="text-center" style="font-size: 20px;">Sign Up</p>
+        <div class="form-group">
+            <label for="">Email:</label>
+            <input type="input" name="email" value="" class="form-control" required>
+        </div>
+        <div class="form-group">
+            <label for="">Password:</label>
+            <input type="password" name="password" id="password" value="" class="form-control" required>
+        </div>
+        <div class="form-group">
+            <label for="">Confirm Password:</label>
+            <input type="password" name="confirmPassword" id="confirmPassword" value="" class="form-control" required>
+        </div>
+        <% if(message.length > 0) { %>
+        <div class="form-group mt-3">
+            <p class="alert alert-danger">
+                <%=message%>
+            </p>
+        </div>
+        <% } %>
+        <div class="form-group text-center mt-3">
+            <button type="submit" class="btn btn-success mt-5">Sign Up</button>
+        </div>
+        <div class="form-group">
+            Go to <a href="/login">Login</a> Page
+        </div>
+    </form>
+</body>
+<script>
+    $(document).ready(function () {
+        $('#signupForm').bootstrapValidator({
+            feedbackIcons: {
+                valid: 'glyphicon glyphicon-ok',
+                invalid: 'glyphicon glyphicon-remove',
+                validating: 'glyphicon glyphicon-refresh'
+            },
+            fields: {
+                password: {
+                    validators: {
+                        identical: {
+                            field: 'confirmPassword',
+                            message: 'The password and its confirm are not the same'
+                        }
+                    }
+                },
+                confirmPassword: {
+                    validators: {
+                        identical: {
+                            field: 'password',
+                            message: 'The password and its confirm are not the same'
+                        }
+                    }
+                }
+            }
+        });
+    });
+</script>
+
+</html>

@@ -1,0 +1,115 @@
+var request = require('request');
+var cheerio = require('cheerio');
+var jar = request.jar();
+var fb_access_token = 'EAABjXwWG6KMBAMRUoB6TBRZCzn3RNBhCCvRAEhQ1uz1ZCJDCaxgX6ivd8bahPoAaGCVFiuXBJc1ZAZCZA76y8odAWtbd09mDdSzFskcBJMthD3AZAmOCoq9V9t4oVlbN20H0QP8NwmpIT11BFLYGYZBYtRkZBstGif7mSl98JNvOrOOABXLuRcPXUc2mAALBSIZABx8FS7KOjeQZDZD';
+var tmRefID = 'd3c757aaf5344d6f8cf1cc2a86188add';
+
+class stubhubApi {
+
+    constructor() { }
+
+    index() { }
+
+    openSite() {
+        let url = 'https://www.stubhub.com/';
+        const options = {
+            url: url,
+            method: 'GET',
+            headers: {
+                'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.80 Safari/537.36'
+            },
+            jar: jar
+        }
+        return new Promise((resolve, reject) => {
+            request(options, (err, response, body) => {
+                if (err) reject(err);
+                resolve(body);
+            });
+        })
+    }
+
+    async login() {
+        // await fbConnection();
+        // console.log('FB connected')
+        // let response = await socialPost();
+        // console.log(response);
+        // console.log('Social posted')
+        let response = await loginWithEmail();
+        console.log(response);
+        // console.log("logged");
+
+    }
+}
+
+async function fbConnection() {
+    let url = 'https://www.stubhub.com/shape/social/connect/v1/connections/facebook/' + fb_access_token + '?shstore=1';
+    const options = {
+        url: url,
+        method: 'GET',
+        headers: {
+            'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.80 Safari/537.36'
+        },
+        jar: jar
+    }
+    return new Promise((resolve, reject) => {
+        request(options, (err, response, body) => {
+            if (err) reject(err);
+            resolve(body);
+        });
+    })
+}
+
+async function socialPost() {
+    let url = 'https://iam.stubhub.com/login/social';
+    var form_data = {
+        provider_name: 'FB',
+        provider_token: fb_access_token,
+        tmRefID: tmRefID
+    };
+    const options = {
+        url: url,
+        method: 'POST',
+        form: form_data,
+        headers: {
+            'content-type': 'application/x-www-form-urlencoded',
+            'accept': 'application/json',
+            'accept-language': 'en-us',
+            'accept-encoding': 'gzip, deflate, br',
+            accept: 'application/json',
+            referer: 'https://www.stubhub.com/my/profile/'
+        },
+        jar: jar
+    }
+    return new Promise((resolve, reject) => {
+        request(options, (err, response, body) => {
+            if (err) reject(err);
+            resolve(body);
+        });
+    })
+}
+
+async function loginWithEmail() {
+    var options = {
+        method: 'POST',
+        url: 'https://iam.stubhub.com/login',
+        headers:
+        {
+            'accept-encoding': 'gzip, deflate, br',
+            'accept-language': 'en-us',
+            'content-type': 'application/x-www-form-urlencoded',
+            accept: 'application/json',
+            referer: 'https://www.stubhub.com/my/profile/',
+            'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.80 Safari/537.36'
+        },
+        form: { username: 'tktundrgrnd@gmail.com', password: 'Tickets345' },
+        jar: jar
+    };
+    return new Promise((resolve, reject) => {
+        request(options, (err, response, body) => {
+            if (err) reject(err);
+            resolve(body);
+        });
+    })
+}
+
+module.exports = stubhubApi;
