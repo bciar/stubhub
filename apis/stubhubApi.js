@@ -27,7 +27,6 @@ class stubhubApi {
                 //parse and check login
                 const $ = cheerio.load(profileHTML);
                 if ($('.profile-name')) {
-                    console.log("profile name");
                     return true;
                 } else return false;
             } else return false;
@@ -88,12 +87,13 @@ class stubhubApi {
     }
 
     async getEventsById(eventID) {
-        console.log(jar);
         let url = 'https://pro.stubhub.com/shape/search/inventory/v2/seller/listings?eventId=' + eventID + '&priceType=listingPrice&sectionIdList=&pricingsummary=true&rows=25&start=0&sort=value%20desc&sectionstats=true&_type=json&_=1544540306147';
         const options = {
             url: url,
             method: 'GET',
             headers: {
+                'accept': 'application/json',
+                'referer': 'https://www.stubhub.com/my/profile/',
                 'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.80 Safari/537.36'
             },
             jar: jar
@@ -160,7 +160,6 @@ async function loginWithEmail() {
         url: 'https://iam.stubhub.com/login',
         headers:
         {
-            'authority': 'www.stubhub.com',
             'accept-encoding': 'gzip, deflate, br',
             'accept-language': 'en-us',
             'content-type': 'application/x-www-form-urlencoded',
