@@ -1,15 +1,45 @@
+var CookiesModel = require('../models/cookies');
 var request = require('request');
 var cheerio = require('cheerio');
 var jar = request.jar();
 var fb_access_token = 'EAABjXwWG6KMBAMRUoB6TBRZCzn3RNBhCCvRAEhQ1uz1ZCJDCaxgX6ivd8bahPoAaGCVFiuXBJc1ZAZCZA76y8odAWtbd09mDdSzFskcBJMthD3AZAmOCoq9V9t4oVlbN20H0QP8NwmpIT11BFLYGYZBYtRkZBstGif7mSl98JNvOrOOABXLuRcPXUc2mAALBSIZABx8FS7KOjeQZDZD';
 var tmRefID = 'd3c757aaf5344d6f8cf1cc2a86188add';
 var sessionID = '';
+
+
 class stubhubApi {
 
 
     constructor() { }
 
     index() { }
+
+    async checkLogin() {
+        if (sessionID == '') {
+            //get session ID and cookie for db
+            let cookieData = await getCookieData();
+            if (cookieData && cookieData.sessionID) {
+                sessionID = cookieData.sessionID;
+                let cookiedb = cookieData.cookies[cookieData.cookies.length - 1].cookie
+                let cookie = request.cookie(cookiedb)
+                let url = 'https://www.stubhub.com/'
+                jar.setCookie(cookie, url);
+                let profileHTML = await getProfilePage();
+                //parse and check login
+                const $ = cheerio.load(profileHTML);
+                if ($('.profile-name')) {
+                    return true;
+                } else return false;
+            } else return false;
+        } else {
+            let profileHTML = await getProfilePage();
+            //parse and check login
+            const $ = cheerio.load(profileHTML);
+            if ($('.profile-name')) {
+                return true;
+            } else return false;
+        }
+    }
 
     getSessionID() {
         return sessionID;
@@ -39,6 +69,8 @@ class stubhubApi {
             let data = JSON.parse(response);
             if (data.login && data.login.session_id) {
                 sessionID = data.login.session_id;
+                //save cookie
+                saveCookie();
                 await initSession(data.login.session_id);
                 return 'Loggedin';
             } else {
@@ -161,6 +193,44 @@ async function initSession(session_id) {
             resolve(body);
         });
     })
+}
+
+async function getProfilePage() {
+    let url = 'https://www.stubhub.com/my/profile';
+    const options = {
+        url: url,
+        method: 'GET',
+        headers: {
+            'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.80 Safari/537.36'
+        },
+        jar: jar
+    }
+    return new Promise((resolve, reject) => {
+        request(options, (err, response, body) => {
+            if (err) reject(err);
+            resolve(body);
+        });
+    })
+}
+
+async function getCookieData() {
+    return new Promise((resolve, reject) => {
+        CookiesModel.findOne({}, (err, cookie) => {
+            if (err) reject(err);
+            resolve(cookie);
+        });
+    })
+}
+
+async function saveCookie() {
+    var cookies = jar.getCookies('https://www.stubhub.com/');
+    CookiesModel.deleteMany({}, (err, data) => {
+        let newCookies = new CookiesModel();
+        newCookies.cookies = cookies.toString();
+        newCookies.sessionID = sessionID;
+        newCookies.save((error) => { });
+    })
+
 }
 
 module.exports = stubhubApi;

@@ -2,14 +2,13 @@ var stubhubApi = require('../apis/stubhubApi');
 var stubhub = new stubhubApi();
 var eventsModel = require('../models/events');
 var ticketModel = require('../models/tickets');
-
 var vvv = 0;
+
 class mainController {
     constructor() { }
 
     async getEventDetail(req, res) {
-        await stubhub.openSite();
-        let login_response = await stubhub.login();
+        let login_response = siteLogin();
         if(login_response == 'Loggedin') {
             let eventData = await stubhub.getEventsById('103926521');
             res.json(eventData);
@@ -18,6 +17,14 @@ class mainController {
         }
     }
     
+}
+
+async function siteLogin() {
+    let loginStatus = await stubhub.checkLogin();
+    if(loginStatus == false) {
+        let response = await stubhub.login();
+        return response;
+    }
 }
 
 
