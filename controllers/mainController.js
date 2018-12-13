@@ -10,6 +10,7 @@ class mainController {
     async getEventDetail(req, res) {
         let login_response = await siteLogin();
         if(login_response == 'Loggedin') {
+            console.log("calling event detail")
             let eventData = await stubhub.getEventsById('103926521');
             res.json(eventData);
         } else {
