@@ -127,8 +127,8 @@ class mainController {
         ticketsModel.find({ date: rdate }, (err, tickets) => {
             tickets.forEach(ticket => {
                 let totalListings = ticket.totalListings;
-                let nums = Math.floor(totalListings / 100) + 1;
-                let rows = 250;
+                let nums = Math.floor(totalListings / 200) + 1;
+                let rows = 200;
                 for (let i = 0; i < nums; i++) {
                     let start = i * rows;
                     if (start + rows > totalListings) rows = totalListings - start;
