@@ -47,6 +47,39 @@ class mainController {
             })
     }
 
+    viewEventDetails(req, res) {
+        let eventID = req.params.eventID;
+        eventsModel.findOne({ eventID: eventID }, (err, event) => {
+            if (err) res.json({ status: 'failed', data: [] });
+            if (event) {
+                res.json({ status: 'success', data: event });
+            }
+        })
+    }
+
+    viewTicketDetails(req, res) {
+        let eventID = req.params.eventID;
+        ticketsModel.find({ eventID: eventID }, (err, tickets) => {
+            if (err) res.json({ status: 'failed', data: [] });
+            if (tickets) {
+                res.json({ status: 'success', data: tickets });
+            }
+        })
+    }
+
+    viewSeatDetails(req, res) {
+        let eventID = req.body.eventID;
+        let date = req.body.date;
+        seatsModel.find({ eventID: eventID, date: date }, (err, seats) => {
+            if (err) {
+                res.json({ status: 'failed', data: [] });
+            }
+            else {
+                res.json({ status: 'success', data: seats });
+            }
+        })
+    }
+
     setting(req, res) {
         res.render('setting', { message: '' });
     }
@@ -148,8 +181,8 @@ class mainController {
                                 });
                             }
                         })
-                        .catch((err)=> {
-                        })
+                            .catch((err) => {
+                            })
                     }
                 }
 

@@ -63,3 +63,13 @@
   z-index: 100;
   width: 100px;
  }
+
+ .event-img-dev{
+   float: left;
+   margin-right: 30px;
+   min-height: 150px;
+ }
+
+ .event-img-dev img{
+   width: 200px;
+ }

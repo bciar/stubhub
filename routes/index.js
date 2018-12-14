@@ -41,6 +41,10 @@ function isLoggedIn(req, res, next) {
 }
 
 router.post('/events/uploadcsv', upload.single('file'), main.uploadcsv);
+router.get('/viewEventDetails/:eventID', isLoggedIn, main.viewEventDetails);
+router.get('/viewTicketDetails/:eventID', isLoggedIn, main.viewTicketDetails);
+router.post('/viewSeatDetails', isLoggedIn, main.viewSeatDetails);
+// //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 router.get('/loginStubhub', main.loginStubhub);
 router.get('/getEventInternalDetails', main.getEventInternalDetails);
