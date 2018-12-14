@@ -134,23 +134,23 @@ class mainController {
                         let start = i * rows;
                         if (start + rows > totalListings) rows = totalListings - start;
                         console.log(start + ' ' + rows + ' ----  '+ ticket.eventID);
-                        // stubhub.getEventsById(ticket.eventID, start, rows).then((ticketData) => {
-                        //     if (ticketData) {
-                        //         ticketData.listing.forEach(list => {
-                        //             let seatObject = new seatsModel();
-                        //             seatObject.eventID = ticket.eventID;
-                        //             seatObject.section = ticket.sectionName;
-                        //             seatObject.price = list.currentPrice.amount;
-                        //             seatObject.row = list.row;
-                        //             seatObject.quantity = list.quantity;
-                        //             seatObject.date = rdate;
-                        //             seatObject.deliveryMethodList = list.deliveryMethodList;
-                        //             seatObject.save((err) => { console.log('seat details saved') })
-                        //         });
-                        //     }
-                        // })
-                        // .catch((err)=> {
-                        // })
+                        stubhub.getEventsById(ticket.eventID, start, rows).then((ticketData) => {
+                            if (ticketData) {
+                                ticketData.listing.forEach(list => {
+                                    let seatObject = new seatsModel();
+                                    seatObject.eventID = ticket.eventID;
+                                    seatObject.section = ticket.sectionName;
+                                    seatObject.price = list.currentPrice.amount;
+                                    seatObject.row = list.row;
+                                    seatObject.quantity = list.quantity;
+                                    seatObject.date = rdate;
+                                    seatObject.deliveryMethodList = list.deliveryMethodList;
+                                    seatObject.save((err) => { console.log('seat details saved') })
+                                });
+                            }
+                        })
+                        .catch((err)=> {
+                        })
                     }
                 }
 
