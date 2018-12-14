@@ -102,10 +102,10 @@ class mainController {
                             ticketObject.date = rdate;
                             ticketObject.totalListings = eventData.totalListings;
                             ticketObject.totalTickets = eventData.totalTickets;
-                            ticketObject.minTicketPrice = eventData.minTicketPrice;
-                            ticketObject.maxTicketPrice = eventData.maxTicketPrice;
-                            ticketObject.averageTicketPrice = eventData.averageTicketPrice;
-                            ticketObject.medianTicketPrice = eventData.medianTicketPrice;
+                            ticketObject.minTicketPrice = eventData.pricingSummary.minTicketPrice;
+                            ticketObject.maxTicketPrice = eventData.pricingSummary.maxTicketPrice;
+                            ticketObject.averageTicketPrice = eventData.pricingSummary.averageTicketPrice;
+                            ticketObject.medianTicketPrice = eventData.pricingSummary.medianTicketPrice;
                             ticketObject.save((err) => { console.log('ticket infor saved at ' + rdate + ' of ' + event.eventID) });
                         })
 
