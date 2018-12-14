@@ -134,16 +134,21 @@ class mainController {
                         let start = i * rows;
                         if (start + rows > totalListings) rows = totalListings - start;
                         stubhub.getEventsById(ticket.eventID, start, rows).then((ticketData) => {
+                            console.log(ticketData);
                             if (ticketData && ticketData.eventId && ticketData.listing) {
                                 ticketData.listing.forEach(list => {
                                     let seatObject = new seatsModel();
                                     var section = '';
-                                    for (let j = 0; j < ticketData.sectionStats.length; j++) {
-                                        if (ticketData.sectionStats[j].sectionId == list.sectionId) {
-                                            section = ticketData.sectionStats[j].sectionName;
-                                            break;
+                                    if (ticketData.sectionStats) {
+                                        for (let j = 0; j < ticketData.sectionStats.length; j++) {
+                                            if (ticketData.sectionStats[j].sectionId == list.sectionId) {
+                                                section = ticketData.sectionStats[j].sectionName;
+                                                break;
+                                            }
                                         }
                                     }
+
+                                    seatObject.eventID = ticket.eventID;
                                     seatObject.section = section;
                                     seatObject.price = list.currentPrice.amount;
                                     seatObject.row = list.row;
@@ -153,6 +158,8 @@ class mainController {
                                     seatObject.save((err) => { console.log('seat details saved') })
                                 });
                             }
+                        })
+                        .catch((err)=> {
                         })
                     }
                 }
