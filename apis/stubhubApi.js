@@ -89,6 +89,7 @@ class stubhubApi {
         return new Promise((resolve, reject) => {
             request(options, (err, response, body) => {
                 if (err) reject(err);
+                console.log(body);
                 if (body.indexOf('<HTML>') > 0) reject('err');
                 resolve(JSON.parse(body));
             });

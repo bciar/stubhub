@@ -133,7 +133,6 @@ class mainController {
                     for (let i = 0; i < nums; i++) {
                         let start = i * rows;
                         if (start + rows > totalListings) rows = totalListings - start;
-                        console.log(start + ' ' + rows + ' ----  '+ ticket.eventID);
                         stubhub.getEventsById(ticket.eventID, start, rows).then((ticketData) => {
                             if (ticketData) {
                                 ticketData.listing.forEach(list => {
