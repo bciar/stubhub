@@ -134,22 +134,11 @@ class mainController {
                         let start = i * rows;
                         if (start + rows > totalListings) rows = totalListings - start;
                         stubhub.getEventsById(ticket.eventID, start, rows).then((ticketData) => {
-                            console.log(ticketData);
-                            if (ticketData && ticketData.eventId && ticketData.listing) {
+                            if (ticketData) {
                                 ticketData.listing.forEach(list => {
                                     let seatObject = new seatsModel();
-                                    var section = '';
-                                    if (ticketData.sectionStats) {
-                                        for (let j = 0; j < ticketData.sectionStats.length; j++) {
-                                            if (ticketData.sectionStats[j].sectionId == list.sectionId) {
-                                                section = ticketData.sectionStats[j].sectionName;
-                                                break;
-                                            }
-                                        }
-                                    }
-
                                     seatObject.eventID = ticket.eventID;
-                                    seatObject.section = section;
+                                    seatObject.section = ticket.sectionName;
                                     seatObject.price = list.currentPrice.amount;
                                     seatObject.row = list.row;
                                     seatObject.quantity = list.quantity;
