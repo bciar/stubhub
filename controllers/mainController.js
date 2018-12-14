@@ -89,28 +89,29 @@ class mainController {
     async saveTicketsPerDay(req, res) {
         eventsModel.find({}, (err, events) => {
             events.forEach(event => {
-                stubhub.getEventsById(event.eventID, 0, 25).then((eventData) => {
-                    if (eventData && eventData.eventId == event.eventID) {
-                        var nowDate = new Date().toLocaleString('en-US', {
-                            timeZone: 'America/New_York'
-                        });
-                        let date = new Date(nowDate);
-                        let rdate = date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate();
-                        ticketsModel.deleteMany({ eventID: event.eventID, date: rdate }, (err, data) => {
-                            let ticketObject = new ticketsModel();
-                            ticketObject.eventID = event.eventID;
-                            ticketObject.date = rdate;
-                            ticketObject.totalListings = eventData.totalListings;
-                            ticketObject.totalTickets = eventData.totalTickets;
-                            ticketObject.minTicketPrice = (eventData.pricingSummary) ? eventData.pricingSummary.minTicketPriceWithCurrency.amount : '';
-                            ticketObject.maxTicketPrice = (eventData.pricingSummary) ? eventData.pricingSummary.maxTicketPriceWithCurrency.amount : '';
-                            ticketObject.averageTicketPrice = (eventData.pricingSummary) ? eventData.pricingSummary.averageTicketPriceWithCurrency.amount : '';
-                            ticketObject.medianTicketPrice = (eventData.pricingSummary) ? eventData.pricingSummary.medianTicketPriceWithCurrency.amount : '';
-                            ticketObject.save((err) => { console.log('ticket infor saved at ' + rdate + ' of ' + event.eventID) });
-                        })
+                console.log(event.eventID)
+                // stubhub.getEventsById(event.eventID, 0, 25).then((eventData) => {
+                //     if (eventData && eventData.eventId == event.eventID) {
+                //         var nowDate = new Date().toLocaleString('en-US', {
+                //             timeZone: 'America/New_York'
+                //         });
+                //         let date = new Date(nowDate);
+                //         let rdate = date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate();
+                //         ticketsModel.deleteMany({ eventID: event.eventID, date: rdate }, (err, data) => {
+                //             let ticketObject = new ticketsModel();
+                //             ticketObject.eventID = event.eventID;
+                //             ticketObject.date = rdate;
+                //             ticketObject.totalListings = eventData.totalListings;
+                //             ticketObject.totalTickets = eventData.totalTickets;
+                //             ticketObject.minTicketPrice = (eventData.pricingSummary) ? eventData.pricingSummary.minTicketPriceWithCurrency.amount : '';
+                //             ticketObject.maxTicketPrice = (eventData.pricingSummary) ? eventData.pricingSummary.maxTicketPriceWithCurrency.amount : '';
+                //             ticketObject.averageTicketPrice = (eventData.pricingSummary) ? eventData.pricingSummary.averageTicketPriceWithCurrency.amount : '';
+                //             ticketObject.medianTicketPrice = (eventData.pricingSummary) ? eventData.pricingSummary.medianTicketPriceWithCurrency.amount : '';
+                //             ticketObject.save((err) => { console.log('ticket infor saved at ' + rdate + ' of ' + event.eventID) });
+                //         })
 
-                    }
-                })
+                //     }
+                // })
 
             });
 
