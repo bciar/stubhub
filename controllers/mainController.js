@@ -118,7 +118,7 @@ class mainController {
         res.send("ok");
     }
 
-    async saveTicketDetailsPerDay(req, res) {
+    async saveSeatsOfTicketsPerDay(req, res) {
         var nowDate = new Date().toLocaleString('en-US', {
             timeZone: 'America/New_York'
         });
@@ -128,8 +128,9 @@ class mainController {
             tickets.forEach(ticket => {
                 let totalListings = ticket.totalListings;
                 let nums = Math.floor(totalListings / 100) + 1;
-                let start = 0, rows = 250;
+                let rows = 250;
                 for (let i = 0; i < nums; i++) {
+                    let start = i * rows;
                     if (start + rows > totalListings) rows = totalListings - start;
                     stubhub.getEventsById(ticket.eventID, start, rows).then((ticketData) => {
                         if (ticketData && ticketData.eventId && ticketData.listing) {
