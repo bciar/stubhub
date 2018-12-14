@@ -74,7 +74,7 @@ class stubhubApi {
     }
 
     async getEventsById(eventID, start, rows) {
-        let url = 'https://pro.stubhub.com/shape/search/inventory/v2/seller/listings?eventId=' + eventID + '&priceType=listingPrice&sectionIdList=&pricingsummary=true&rows=' + rows + '&start=' + start + '&sort=value%20desc&sectionstats=true&_type=json&_=1544540306147';
+        let url = 'https://pro.stubhub.com/shape/search/inventory/v2/seller/listings?eventId=' + eventID + '&priceType=listingPrice&sectionIdList=&pricingsummary=true&rows=' + rows + '&start=' + start + '&sort=value%20desc&sectionstats=true&_type=json';
         const options = {
             url: url,
             method: 'GET',
