@@ -52,7 +52,7 @@ class stubhubApi {
     async login() {
         let response = await loginWithEmail();
         if (response && response != 403) {
-            if(response.indexOf('permission') > 0) {
+            if (response.indexOf('permission') > 0) {
                 return 'Permission Error.';
             }
             let data = JSON.parse(response);
@@ -64,7 +64,7 @@ class stubhubApi {
                 return 'Unlogged';
             }
         } else {
-            return 'Unlogged';
+            return '403 Error';
         }
     }
 
@@ -89,7 +89,7 @@ class stubhubApi {
         return new Promise((resolve, reject) => {
             request(options, (err, response, body) => {
                 if (err) reject(err);
-                if(body.indexOf('<HTML>') > 0) reject('err');
+                if (body.indexOf('<HTML>') > 0) reject('err');
                 resolve(JSON.parse(body));
             });
         })
@@ -170,6 +170,8 @@ async function loginWithEmail() {
         url: 'https://iam.stubhub.com/login',
         headers:
         {
+            'postman-token': '1c8d6fa7-35d1-561b-3b7c-73bc5b68c377',
+            'cache-control': 'no-cache',
             'accept-encoding': 'gzip, deflate, br',
             'accept-language': 'en-us',
             'content-type': 'application/x-www-form-urlencoded',
