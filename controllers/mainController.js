@@ -102,10 +102,10 @@ class mainController {
                             ticketObject.date = rdate;
                             ticketObject.totalListings = eventData.totalListings;
                             ticketObject.totalTickets = eventData.totalTickets;
-                            ticketObject.minTicketPrice = (eventData.pricingSummary)?eventData.pricingSummary.minTicketPriceWithCurrency.amount:'';
-                            ticketObject.maxTicketPrice = (eventData.pricingSummary)?eventData.pricingSummary.maxTicketPriceWithCurrency.amount:'';
-                            ticketObject.averageTicketPrice = (eventData.pricingSummary)?eventData.pricingSummary.averageTicketPriceWithCurrency.amount:'';
-                            ticketObject.medianTicketPrice = (eventData.pricingSummary)?eventData.pricingSummary.medianTicketPriceWithCurrency.amount:'';
+                            ticketObject.minTicketPrice = (eventData.pricingSummary) ? eventData.pricingSummary.minTicketPriceWithCurrency.amount : '';
+                            ticketObject.maxTicketPrice = (eventData.pricingSummary) ? eventData.pricingSummary.maxTicketPriceWithCurrency.amount : '';
+                            ticketObject.averageTicketPrice = (eventData.pricingSummary) ? eventData.pricingSummary.averageTicketPriceWithCurrency.amount : '';
+                            ticketObject.medianTicketPrice = (eventData.pricingSummary) ? eventData.pricingSummary.medianTicketPriceWithCurrency.amount : '';
                             ticketObject.save((err) => { console.log('ticket infor saved at ' + rdate + ' of ' + event.eventID) });
                         })
 
@@ -127,33 +127,36 @@ class mainController {
         ticketsModel.find({ date: rdate }, (err, tickets) => {
             tickets.forEach(ticket => {
                 let totalListings = ticket.totalListings;
-                let nums = Math.floor(totalListings / 200) + 1;
-                let rows = 200;
-                for (let i = 0; i < nums; i++) {
-                    let start = i * rows;
-                    if (start + rows > totalListings) rows = totalListings - start;
-                    stubhub.getEventsById(ticket.eventID, start, rows).then((ticketData) => {
-                        if (ticketData && ticketData.eventId && ticketData.listing) {
-                            ticketData.listing.forEach(list => {
-                                let seatObject = new seatsModel();
-                                var section = '';
-                                for (let j = 0; j < ticketData.sectionStats.length; j++) {
-                                    if (ticketData.sectionStats[j].sectionId == list.sectionId) {
-                                        section = ticketData.sectionStats[j].sectionName;
-                                        break;
+                if (totalListings > 0) {
+                    let nums = Math.floor(totalListings / 200) + 1;
+                    let rows = 200;
+                    for (let i = 0; i < nums; i++) {
+                        let start = i * rows;
+                        if (start + rows > totalListings) rows = totalListings - start;
+                        stubhub.getEventsById(ticket.eventID, start, rows).then((ticketData) => {
+                            if (ticketData && ticketData.eventId && ticketData.listing) {
+                                ticketData.listing.forEach(list => {
+                                    let seatObject = new seatsModel();
+                                    var section = '';
+                                    for (let j = 0; j < ticketData.sectionStats.length; j++) {
+                                        if (ticketData.sectionStats[j].sectionId == list.sectionId) {
+                                            section = ticketData.sectionStats[j].sectionName;
+                                            break;
+                                        }
                                     }
-                                }
-                                seatObject.section = section;
-                                seatObject.price = list.currentPrice.amount;
-                                seatObject.row = list.row;
-                                seatObject.quantity = list.quantity;
-                                seatObject.date = rdate;
-                                seatObject.deliveryMethodList = list.deliveryMethodList;
-                                seatObject.save((err) => { console.log('seat details saved') })
-                            });
-                        }
-                    })
+                                    seatObject.section = section;
+                                    seatObject.price = list.currentPrice.amount;
+                                    seatObject.row = list.row;
+                                    seatObject.quantity = list.quantity;
+                                    seatObject.date = rdate;
+                                    seatObject.deliveryMethodList = list.deliveryMethodList;
+                                    seatObject.save((err) => { console.log('seat details saved') })
+                                });
+                            }
+                        })
+                    }
                 }
+
             });
 
         })
