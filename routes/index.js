@@ -3,44 +3,47 @@ var router = express.Router();
 var passport = require('passport');
 var flash = require('connect-flash');
 var mainController = require('../controllers/mainController');
-var homeContoller = require('../controllers/homeController');
 var adminController = require('../controllers/adminController');
 var multer = require('multer');
 var upload = multer({ dest: 'tmp/' });
 var main = new mainController();
-var home = new homeContoller();
 var admin = new adminController();
 
-router.get('/', isLoggedIn, home.index);
-router.get('/setting', isLoggedIn, home.setting);
-router.post('/changepassword', isLoggedIn, home.changepassword);
+router.get('/', isLoggedIn, main.index);
+router.get('/setting', isLoggedIn, main.setting);
+router.post('/changepassword', isLoggedIn, main.changepassword);
 //Authenticate
 router.get('/login', (req, res) => { res.render('auth/login', { message: req.flash('loginMessage') }); });
 router.get('/signup', (req, res) => { res.render('auth/signup', { message: req.flash('signupMessage') }); });
 router.post('/login', passport.authenticate('local-login', {
-    successRedirect: '/',
-    failureRedirect: '/login',
-    failureFlash: true
+  successRedirect: '/',
+  failureRedirect: '/login',
+  failureFlash: true
 }));
 router.post('/signup', passport.authenticate('local-signup', {
-    successRedirect: '/login',
-    failureRedirect: '/signup',
-    failureFlash: true
+  successRedirect: '/login',
+  failureRedirect: '/signup',
+  failureFlash: true
 }));
 
 router.get('/logout', isLoggedIn, (req, res) => {
-    req.logout();
-    res.redirect('/login');
+  req.logout();
+  res.redirect('/login');
 });
 
 function isLoggedIn(req, res, next) {
-    //check maintain
-    if (req.isAuthenticated()) {
-        return next();
-    } else {
-        res.redirect('/login');
-    }
+  //check maintain
+  if (req.isAuthenticated()) {
+    return next();
+  } else {
+    res.redirect('/login');
+  }
 }
+
+router.post('/events/uploadcsv', upload.single('file'), main.uploadcsv);
+router.get('/getEventInternalDetails', main.getEventInternalDetails);
+router.get('/saveTicketsPerDay', main.saveTicketsPerDay);
+router.get('/saveTicketDetailsPerDay', main.saveTicketDetailsPerDay);
 
 router.get('/getEventDetail', main.getEventDetail);
 router.get('/loginTest', main.loginTest);

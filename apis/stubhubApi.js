@@ -70,8 +70,28 @@ class stubhubApi {
         return response;
     }
 
-    async getEventsById(eventID) {
-        let url = 'https://pro.stubhub.com/shape/search/inventory/v2/seller/listings?eventId=' + eventID + '&priceType=listingPrice&sectionIdList=&pricingsummary=true&rows=25&start=0&sort=value%20desc&sectionstats=true&_type=json&_=1544540306147';
+    async getEventsById(eventID, start, rows) {
+        let url = 'https://pro.stubhub.com/shape/search/inventory/v2/seller/listings?eventId=' + eventID + '&priceType=listingPrice&sectionIdList=&pricingsummary=true&rows=' + rows + '&start=' + start + '&sort=value%20desc&sectionstats=true&_type=json&_=1544540306147';
+        const options = {
+            url: url,
+            method: 'GET',
+            headers: {
+                'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
+                'referer': 'https://www.stubhub.com/my/profile/',
+                'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.80 Safari/537.36'
+            },
+            jar: jar
+        }
+        return new Promise((resolve, reject) => {
+            request(options, (err, response, body) => {
+                if (err) reject(err);
+                resolve(JSON.parse(body));
+            });
+        })
+    }
+
+    async getEventInternalDetails(eventID) {
+        let url = 'https://pro.stubhub.com/shape/catalog/events/v3/' + eventID + '?mode=internal&_=1544540306147';
         const options = {
             url: url,
             method: 'GET',

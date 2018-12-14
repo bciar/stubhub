@@ -5,10 +5,12 @@ var mongoose = require('mongoose');
 var ticketsSchema = mongoose.Schema({
   eventID: String,
   date: String,
-  primary: Number,
-  resale: Number,
-  total: Number,
-  seats: []
+  totalListings: Number,
+  totalTickets: Number,
+  minTicketPrice: Number,
+  maxTicketPrice: Number,
+  averageTicketPrice: Number,
+  medianTicketPrice: Number
 }, {
   timestamps: {
     createdAt: 'created_at'
