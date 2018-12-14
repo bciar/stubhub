@@ -75,15 +75,9 @@ class mainController {
         })
     }
 
-    async getEventDetail(req, res) {
-        let login_response = await siteLogin();
-        if (login_response == 'Loggedin') {
-            console.log("calling event detail")
-            let eventData = await stubhub.getEventsById('103926521', 0, 25);
-            res.json(eventData);
-        } else {
-            res.send("Login Failed");
-        }
+    async loginStubhub(req, res) {
+        let response = await siteLogin();
+        res.send(response);
     }
 
     async loginTest(req, res) {
@@ -192,8 +186,6 @@ class mainController {
 
 async function siteLogin() {
     let loginStatus = await stubhub.checkLogin();
-    console.log("--------login status--------");
-    console.log(loginStatus);
     if (loginStatus == false) {
         await stubhub.openSite();
         let response = await stubhub.login();

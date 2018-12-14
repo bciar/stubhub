@@ -45,7 +45,7 @@ router.get('/getEventInternalDetails', main.getEventInternalDetails);
 router.get('/saveTicketsPerDay', main.saveTicketsPerDay);
 router.get('/saveTicketDetailsPerDay', main.saveTicketDetailsPerDay);
 
-router.get('/getEventDetail', main.getEventDetail);
+router.get('/loginStubhub', main.loginStubhub);
 router.get('/loginTest', main.loginTest);
 
 //////////////////////////////////////////////////////////////////  admin //////////////////////////////////////////////////////////////////

@@ -76,8 +76,8 @@ class stubhubApi {
             url: url,
             method: 'GET',
             headers: {
-                'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
-                'referer': 'https://www.stubhub.com/my/profile/',
+                'accept': 'application/json',
+                'referer': 'https://pro.stubhub.com/simweb/sim/services/priceanalysis?eventId='+eventID,
                 'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.80 Safari/537.36'
             },
             jar: jar
@@ -96,8 +96,9 @@ class stubhubApi {
             url: url,
             method: 'GET',
             headers: {
-                'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
-                'referer': 'https://www.stubhub.com/my/profile/',
+                'accept': 'application/json',
+                'target_host': 'stubhub',
+                'referer': 'https://pro.stubhub.com/simweb/sim/services/priceanalysis?eventId='+eventID,
                 'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.80 Safari/537.36'
             },
             jar: jar
