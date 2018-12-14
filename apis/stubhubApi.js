@@ -52,6 +52,7 @@ class stubhubApi {
     async login() {
         let response = await loginWithEmail();
         if (response && response != 403) {
+            console.log(response);
             let data = JSON.parse(response);
             if (data.login && data.login.session_id) {
                 sessionID = data.login.session_id;
