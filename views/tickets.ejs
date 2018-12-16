@@ -116,7 +116,7 @@
                     let i = 0;
                     res.data.forEach(seat => {
                         i++;
-                        let row = '<tr><td>' + i + '</td><td></td><td></td><td>' + seat.price + '</td><td>' + seat.quantity + '</td><td>' + seat.deliveryMethodList + '</td></tr>';
+                        let row = '<tr><td>' + i + '</td><td>'+seat.section+'</td><td>'+seat.row+'</td><td>' + seat.price + '</td><td>' + seat.quantity + '</td><td>' + seat.deliveryMethodList + '</td></tr>';
                         html = html + row;
                     });
                     $('#seatTable-body').html(html);
