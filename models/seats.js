@@ -7,7 +7,7 @@ var seatsSchema = mongoose.Schema({
   date: String,
   section: String,
   price: Number,
-  rows: String,
+  row: String,
   quantity: Number,
   deliveryMethodList : []
 }, {

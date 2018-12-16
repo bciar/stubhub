@@ -200,7 +200,7 @@ class mainController {
                                 ticketData.listing.forEach(list => {
                                     let seatObject = new seatsModel();
                                     seatObject.eventID = ticket.eventID;
-                                    seatObject.section = ticket.sectionName;
+                                    seatObject.section = list.sectionName;
                                     seatObject.price = list.currentPrice.amount;
                                     seatObject.row = list.row;
                                     seatObject.quantity = list.quantity;
