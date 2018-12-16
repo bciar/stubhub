@@ -249,6 +249,7 @@ class mainController {
 async function siteLogin() {
     let loginStatus = await stubhub.checkLogin();
     if (loginStatus == false) {
+        console.log('new Logging')
         await stubhub.openSite();
         let response = await stubhub.login();
         return response;
