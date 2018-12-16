@@ -70,12 +70,12 @@ app.use(function (err, req, res, next) {
 
 //cron
 new CronJob('0 0 23 * * *', function () {
-  console.log("running a task every midnight");
-  request.get(process.env.PRODUCT_SERVER_URL + '/saveEvents', (err, response) => {
-    console.log('saveEvents')
-    request.get(process.env.PRODUCT_SERVER_URL + '/saveTickets', (err, response) => {
-      console.log('saveTickets')
-    })
-  })
+  // console.log("running a task every midnight");
+  // request.get(process.env.PRODUCT_SERVER_URL + '/saveEvents', (err, response) => {
+  //   console.log('saveEvents')
+  //   request.get(process.env.PRODUCT_SERVER_URL + '/saveTickets', (err, response) => {
+  //     console.log('saveTickets')
+  //   })
+  // })
 }, null, true, 'America/New_York');
 module.exports = app;
