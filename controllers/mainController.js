@@ -47,6 +47,35 @@ class mainController {
             })
     }
 
+    addsingleEvent(req, res) {
+        let eventID = req.body.eventID;
+        eventsModel.find({ eventID: eventID }, (err, data) => {
+            if (data.length == []) {
+                newEvent.eventID = eventID;
+                newEvent.save((err) => {
+                    res.redirect('/');
+                });
+            } else {
+                res.redirect('/');
+            }
+        })
+    }
+
+    ticketPage(req, res) {
+        let eventID = req.params.eventID;
+        eventsModel.findOne({ eventID: eventID }, (err, event) => {
+            if (err) res.redirect('/');
+            if (event) {
+                ticketsModel.find({ eventID: eventID }, (err2, tickets) => {
+                    if (err2) res.redirect('/');
+                    if (tickets) {
+                        res.render('tickets', { event: event, tickets: tickets });
+                    }
+                })
+            }
+        })
+    }
+
     viewEventDetails(req, res) {
         let eventID = req.params.eventID;
         eventsModel.findOne({ eventID: eventID }, (err, event) => {

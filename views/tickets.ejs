@@ -1,7 +1,7 @@
 <% layout('./layout/app') -%>
 
 <div class="row">
-    <a href="/events">Go back to event page</a>
+    <a href="/">Go back to event page</a>
 </div>
 <div class="row mt-5">
     <div class="col-sm-3">
@@ -21,15 +21,9 @@
             </p>
         </div>
         <div class="row">
-            <label for="">Description: </label>
-            <p>
-                <%=event.info%>
-            </p>
-        </div>
-        <div class="row">
             <label for="">Address: </label>
             <p>
-                <%=event.venue.name+'('+event.venue.address + ' ' + event.venue.city + ' ' + event.venue.state +')'%>
+                <%=event.venue.address + ', ' + event.venue.city + ', ' + event.venue.state + ', ' + event.venue.country%>
             </p>
         </div>
     </div>
@@ -39,14 +33,14 @@
     <p>Available Tickets</p>
     <table id="ticketTable" class="table table-striped table-bordered" cellspacing="0" style="width:100%;">
         <thead>
-            <th class="th-sm">Date
-            </th>
-            <th class="th-sm">Primary
-            </th>
-            <th class="th-sm">Resale
-            </th>
-            <th class="th-sm">Total
-            </th>
+            <th class="th-sm">No</th>
+            <th class="th-sm">Date</th>
+            <th class="th-sm">TotalListings</th>
+            <th class="th-sm">TotalTickets</th>
+            <th class="th-sm">Min</th>
+            <th class="th-sm">Max</th>
+            <th class="th-sm">Average</th>
+            <th class="th-sm">Median</th>
             <th class="th-sm">
                 Action
             </th>
@@ -55,123 +49,78 @@
             <% for(let i = 0; i < tickets.length; i++) { let ticket = tickets[i]; %>
             <tr>
                 <td>
+                    <%=i+1%>
+                </td>
+                <td>
                     <%=ticket.date%>
                 </td>
                 <td>
-                    <%=ticket.primary%>
+                    <%=ticket.totalListings%>
                 </td>
                 <td>
-                    <%=ticket.resale%>
+                    <%=ticket.totalTickets%>
                 </td>
                 <td>
-                    <%=ticket.total%>
+                    <%=ticket.minTicketPrice%>
+                </td>
+                <td>
+                    <%=ticket.maxTicketPrice%>
+                </td>
+                <td>
+                    <%=ticket.averageTicketPrice%>
+                </td>
+                <td>
+                    <%=ticket.medianTicketPrice%>
                 </td>
                 <td class="text-center">
-                    <button class="btn btn-success" onClick="viewDetail('<%=ticket._id%>')">View Seats</button>
+                    <button class="btn btn-success" onClick="viewSeats('<%=ticket.eventID%>', '<%=ticket.date%>')">View
+                        Seats</button>
                 </td>
             </tr>
             <% } %>
         </tbody>
     </table>
 </div>
-<div class="row mt-5 mb-5">
-    <p>Available Tickets</p>
-    <table id="ticketDetailTable" class="table table-striped table-bordered" cellspacing="0" style="width:100%;">
+<div class="row mt-5 mb-5" id="seatDetails-div" style="display:none;">
+    <p class="mt-5 mb-3"><b>Seats</b></p>
+    <table id="seatTable" class="table table-striped table-bordered" cellspacing="0" width="100%">
         <thead>
-            <th class="th-sm">Min
-            </th>
-            <th class="th-sm">Max
-            </th>
-            <th class="th-sm">Currency
-            </th>
-            <th class="th-sm">InventoryType
-            </th>
-            <th class="th-sm">OfferType
-            </th>
-            <th class="th-sm">Count
-            </th>
-            <th class="th-sm">Action
-            </th>
+            <th class="th-sm">No</th>
+            <th class="th-sm">Section</th>
+            <th class="th-sm">Row</th>
+            <th class="th-sm">Price</th>
+            <th class="th-sm">Quantity</th>
+            <th class="th-sm">DeliveryMethodList</th>
         </thead>
-        <tbody id="ticketDetailTBody">
-
+        <tbody id="seatTable-body">
         </tbody>
-
     </table>
 </div>
-<div class="row mt-5 mb-5" id="sections" style="display:none">
-    <p>Sections</p>
-    <table id="ticketSectionTable" class="table table-striped table-bordered" cellspacing="0" style="width:100%;">
-        <thead>
-            <th class="th-sm">No
-            </th>
-            <th class="th-sm">Section
-            </th>
-            <th class="th-sm">Row
-            </th>
-            <th class="th-sm">Seat
-            </th>
-        </thead>
-        <tbody id="ticketSectionTBody">
 
-        </tbody>
-
-    </table>
-</div>
 <script src="//cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
 <script>
-    var ticketID = '';
-    $(function () {
-        $('#ticketTable').DataTable({ responsive: true });
-        $('.dataTables_wrapper').attr('style', 'width: 100%;');
-        endloading();
-    })
-    function viewDetail(id) {
-        $("#ticketDetailTable").dataTable().fnDestroy()
-        ticketID = id;
-        $("#sections").attr('style', 'display: none;');
+    function viewSeats(eventID, date) {
+        $('#seatDetails-div').attr('style', 'display: none;');
+        $("#seatTable").dataTable().fnDestroy();
         $.ajax({
-            url: '/ticketSeats/' + id,
-            method: 'GET',
+            url: '/viewSeatDetails',
+            method: 'POST',
+            data: {
+                eventID,
+                date
+            },
             success: function (res) {
-                if (res.success == 'success') {
-                    let tbody = '';
+                if (res.status == 'success') {
+                    $('#seatDetails-div').attr('style', 'display: block;');
+                    let html = '';
                     let i = 0;
-                    res.seats.forEach(seat => {
-                        let row = '<tr><td>' + seat.min + '</td><td>' + seat.max + '</td><td>' + seat.currency + '</td><td>' + seat.inventoryType + '</td><td>' + seat.offerType + '</td><td>' + seat.count + '</td><td><button class="btn btn-primary" onclick="viewSection(' + i + ');">View Section</button></td></tr>';
-                        tbody = tbody + row;
+                    res.data.forEach(seat => {
                         i++;
+                        let row = '<tr><td>' + i + '</td><td></td><td></td><td>' + seat.price + '</td><td>' + seat.quantity + '</td><td>' + seat.deliveryMethodList + '</td></tr>';
+                        html = html + row;
                     });
-                    $("#ticketDetailTBody").html(tbody);
-                    $('#ticketDetailTable').DataTable({ responsive: true });
-                    $('.dataTables_wrapper').attr('style', 'width: 100%;');
-                }
-            }
-        })
-    }
-
-    function viewSection(index) {
-        showloading();
-
-        $.ajax({
-            url: '/ticketSections/' + ticketID + '/' + index,
-            method: 'GET',
-            success: function (res) {
-                $("#sections").attr('style', 'display: block;');
-                endloading();
-                $("#ticketSectionTable").dataTable().fnDestroy()
-                if (res.success == 'success') {
-                    let sections = res.data;
-                    let tbody = '';
-                    let i = 0;
-                    sections.forEach(section => {
-                        i++;
-                        let row = '<tr><td>' + i + '</td><td>' + section.section + '</td><td>' + section.row + '</td><td>' + section.seat + '</td></tr>';
-                        tbody = tbody + row;
-                    });
-                    $("#ticketSectionTBody").html(tbody);
-                    $('#ticketSectionTable').DataTable({ responsive: true });
-                    $('.dataTables_wrapper').attr('style', 'width: 100%;');
+                    $('#seatTable-body').html(html);
+                    $('#seatTable').DataTable({ responsive: true });
                 }
             }
         })
