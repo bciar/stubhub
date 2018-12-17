@@ -26,6 +26,7 @@
                 </th>
                 <th class="th-sm">Name</th>
                 <th class="th-sm">Date</th>
+                <th class="th-sm">Venue</th>
                 <th class="th-sm">
                     Action
                 </th>
@@ -45,11 +46,12 @@
                     <td>
                         <%=event.eventDate%>
                     </td>
-                    <td>
-                        <button class="btn btn-success" title="View Tickets"><a href="/tickets/<%=event.eventID%>"><i
-                                    class="fas fa-align-justify"></i></a></button>
-                        <button class="btn btn-danger" onclick="removeEvent('<%=event.eventID%>')" title="Delete"><i
-                                class="far fa-trash-alt"></i></button>
+                    <td style="width: 200px;"><%=' ' + event.venue.name + ', ' + event.venue.city + ', ' + event.venue.state%></td>
+                    <td class="text-center">
+                        <a href="https://pro.stubhub.com/simweb/sim/services/priceanalysis?<%=event.eventID%>" target="_blank"><button class="btn btn-success" title="Visit Site"><i
+                                    class="fas fa-location-arrow"></i></button></a>
+                        <a href="/tickets/<%=event.eventID%>"><button class="btn btn-success" title="View Tickets"><i
+                                    class="fas fa-align-justify"></i></button></a>
                     </td>
                 </tr>
                 <% } %>

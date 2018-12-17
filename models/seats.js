@@ -9,7 +9,8 @@ var seatsSchema = mongoose.Schema({
   price: Number,
   row: String,
   quantity: Number,
-  deliveryMethodList : []
+  deliveryMethodList : [],
+  deliveryTypeList: []
 }, {
   timestamps: {
     createdAt: 'created_at'

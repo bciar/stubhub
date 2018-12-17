@@ -9,21 +9,21 @@
     </div>
     <div class="col-sm-9">
         <div class="row">
-            <label for="">Event ID: </label>
+            <label for="" class="mr-3">Event ID: </label>
             <p>
                 <%=event.eventID%>
             </p>
         </div>
         <div class="row">
-            <label for="">Name: </label>
+            <label for="" class="mr-3">Name: </label>
             <p>
                 <%=event.name%>
             </p>
         </div>
         <div class="row">
-            <label for="">Address: </label>
+            <label for="" class="mr-3">Address: </label>
             <p>
-                <%=event.venue.address + ', ' + event.venue.city + ', ' + event.venue.state + ', ' + event.venue.country%>
+                <%=' ' + event.venue.name + ', ' + event.venue.city + ', ' + event.venue.state%>
             </p>
         </div>
     </div>
@@ -38,7 +38,6 @@
             <th class="th-sm">TotalListings</th>
             <th class="th-sm">TotalTickets</th>
             <th class="th-sm">Min</th>
-            <th class="th-sm">Max</th>
             <th class="th-sm">Average</th>
             <th class="th-sm">Median</th>
             <th class="th-sm">
@@ -64,9 +63,6 @@
                     <%=ticket.minTicketPrice%>
                 </td>
                 <td>
-                    <%=ticket.maxTicketPrice%>
-                </td>
-                <td>
                     <%=ticket.averageTicketPrice%>
                 </td>
                 <td>
@@ -90,7 +86,7 @@
             <th class="th-sm">Row</th>
             <th class="th-sm">Price</th>
             <th class="th-sm">Quantity</th>
-            <th class="th-sm">DeliveryMethodList</th>
+            <th class="th-sm">DeliveryList</th>
         </thead>
         <tbody id="seatTable-body">
         </tbody>
@@ -116,7 +112,30 @@
                     let i = 0;
                     res.data.forEach(seat => {
                         i++;
-                        let row = '<tr><td>' + i + '</td><td>'+seat.section+'</td><td>'+seat.row+'</td><td>' + seat.price + '</td><td>' + seat.quantity + '</td><td>' + seat.deliveryMethodList + '</td></tr>';
+                        let deliveryList = '';
+                        for (let j = 0; j < seat.deliveryTypeList; j++) {
+                            let deliveryType = seat.deliveryTypeList[j];
+                            let deliveryMethod = seat.deliveryList[j];
+                            if (deliveryType == 1) {
+                                deliveryList = deliveryList + 'No PDF attached,';
+                            } else if (deliveryType == 2) {
+                                deliveryList = deliveryList + 'PDF attached, ';
+                            } else if (deliveryType == 12 || deliveryMethod == 41) {
+                                deliveryList = deliveryList + 'Mobileqr instant, ';
+                            } else if (deliveryType == 9 || deliveryMethod == 42) {
+                                deliveryList = deliveryList + 'Non Mobileqr instant, ';
+                            } else if (deliveryType == 10 || deliveryMethod == 43) {
+                                deliveryList = deliveryList + 'Modile transfer, ';
+                            } else if (deliveryType == 5 || deliveryMethod == 24) {
+                                deliveryList = deliveryList + 'Ups, ';
+                            } else if (deliveryType == 4 || deliveryMethod == 17) {
+                                deliveryList = deliveryList + 'LMS, ';
+                            }
+                        };
+                        if(deliveryList.length > 0) {
+                            deliveryList = deliveryList.substring(0, deliveryList.length - 2);
+                        }
+                        let row = '<tr><td>' + i + '</td><td>' + seat.section + '</td><td>' + seat.row + '</td><td>' + seat.price + '</td><td>' + seat.quantity + '</td><td>' + deliveryList + '</td></tr>';
                         html = html + row;
                     });
                     $('#seatTable-body').html(html);

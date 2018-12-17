@@ -50,8 +50,9 @@ router.post('/viewSeatDetails', isLoggedIn, main.viewSeatDetails);
 
 router.get('/loginStubhub', main.loginStubhub);
 router.get('/getEventInternalDetails', main.getEventInternalDetails);
-router.get('/saveTicketsPerDay', main.saveTicketsPerDay);
-router.get('/saveSeatsOfTicketsPerDay', main.saveSeatsOfTicketsPerDay);
+router.get('/saveActiveTickets', main.saveActiveTickets);
+router.get('/saveSoldTickets', main.saveSoldTickets);
+router.get('/saveSeatsOfActiveEvents', main.saveSeatsOfActiveEvents);
 
 router.get('/loginTest', main.loginTest);
 

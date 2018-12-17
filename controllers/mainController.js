@@ -148,10 +148,10 @@ class mainController {
         res.send(loginStatus);
     }
 
-    async saveTicketsPerDay(req, res) {
+    async saveActiveTickets(req, res) {
         eventsModel.find({}, (err, events) => {
             events.forEach(event => {
-                stubhub.getEventsById(event.eventID, 0, 25).then((eventData) => {
+                stubhub.getActiveTicketsById(event.eventID, 0, 25).then((eventData) => {
                     if (eventData && eventData.eventId == event.eventID) {
                         var nowDate = new Date().toLocaleString('en-US', {
                             timeZone: 'America/New_York'
@@ -180,7 +180,11 @@ class mainController {
         res.send("ok");
     }
 
-    async saveSeatsOfTicketsPerDay(req, res) {
+    async saveSoldTickets(req, res) {
+
+    }
+
+    async saveSeatsOfActiveEvents(req, res) {
         var nowDate = new Date().toLocaleString('en-US', {
             timeZone: 'America/New_York'
         });
@@ -195,7 +199,7 @@ class mainController {
                     for (let i = 0; i < nums; i++) {
                         let start = i * rows;
                         if (start + rows > totalListings) rows = totalListings - start;
-                        stubhub.getEventsById(ticket.eventID, start, rows).then((ticketData) => {
+                        stubhub.getActiveTicketsById(ticket.eventID, start, rows).then((ticketData) => {
                             if (ticketData) {
                                 ticketData.listing.forEach(list => {
                                     let seatObject = new seatsModel();
