@@ -4,13 +4,14 @@ var mongoose = require('mongoose');
 // define the schema for our user model
 var ticketsSchema = mongoose.Schema({
   eventID: String,
-  date: String,
+  datetime: String,
   totalListings: Number,
   totalTickets: Number,
   minTicketPrice: Number,
   maxTicketPrice: Number,
   averageTicketPrice: Number,
-  medianTicketPrice: Number
+  medianTicketPrice: Number,
+  soldNum: Number
 }, {
   timestamps: {
     createdAt: 'created_at'

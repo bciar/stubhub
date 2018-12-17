@@ -124,6 +124,28 @@ class stubhubApi {
         })
     }
 
+    async getSoldTicketsById(eventID) {
+        let url = 'https://pro.stubhub.com/shape/accountmanagement/sales/v1/event/' + eventID + '?sort=SALEDATE%20DESC&sectionId=0&priceType=listprice&filters=&_type=json';
+        const options = {
+            url: url,
+            method: 'GET',
+            headers: {
+                'accept': 'application/json',
+                'target_host': 'stubhub',
+                'referer': 'https://pro.stubhub.com/simweb/sim/services/priceanalysis?eventId=' + eventID,
+                'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.80 Safari/537.36'
+            },
+            jar: jar
+        }
+        return new Promise((resolve, reject) => {
+            request(options, (err, response, body) => {
+                if (err) reject(err);
+                if (body.indexOf('permission') > 0) reject('err');
+                else { resolve(JSON.parse(body)); }
+            });
+        })
+    }
+
     async getEventInternalDetails(eventID) {
         let url = 'https://pro.stubhub.com/shape/catalog/events/v3/' + eventID + '?mode=internal&_=1544540306147';
         const options = {

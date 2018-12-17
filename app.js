@@ -70,6 +70,9 @@ app.use(function (err, req, res, next) {
 
 //cron
 new CronJob('0 0 23 * * *', function () {
+//   var nowDate = new Date().toLocaleString('en-US', {
+//     timeZone: 'America/New_York'
+// });
   // console.log("running a task every midnight");
   // request.get(process.env.PRODUCT_SERVER_URL + '/saveEvents', (err, response) => {
   //   console.log('saveEvents')

@@ -1,6 +1,7 @@
 var eventsModel = require('../models/events');
 var ticketsModel = require('../models/tickets');
 var seatsModel = require('../models/seats');
+var soldseatsModel = require('../models/soldseats');
 var User = require('../models/user');
 var stringify = require('csv-stringify');
 var csv = require('fast-csv');
@@ -161,29 +162,28 @@ class mainController {
 
     }
 
-    async saveActiveTickets(req, res) {
+    async saveTickets(req, res) {
+        let nowDateTime = req.query.datetime;
         eventsModel.find({}, (err, events) => {
             events.forEach(event => {
                 stubhub.getActiveTicketsById(event.eventID, 0, 25).then((eventData) => {
                     if (eventData && eventData.eventId == event.eventID) {
-                        var nowDate = new Date().toLocaleString('en-US', {
-                            timeZone: 'America/New_York'
+                        let ticketObject = new ticketsModel();
+                        ticketObject.eventID = event.eventID;
+                        ticketObject.datetime = nowDateTime;
+                        ticketObject.totalListings = eventData.totalListings;
+                        ticketObject.totalTickets = eventData.totalTickets;
+                        ticketObject.minTicketPrice = (eventData.pricingSummary) ? eventData.pricingSummary.minTicketPriceWithCurrency.amount : '';
+                        ticketObject.maxTicketPrice = (eventData.pricingSummary) ? eventData.pricingSummary.maxTicketPriceWithCurrency.amount : '';
+                        ticketObject.averageTicketPrice = (eventData.pricingSummary) ? eventData.pricingSummary.averageTicketPriceWithCurrency.amount : '';
+                        ticketObject.medianTicketPrice = (eventData.pricingSummary) ? eventData.pricingSummary.medianTicketPriceWithCurrency.amount : '';
+                        ticketObject.save((err) => {
+                            console.log('ticket infor saved at ' + nowDateTime + ' of ' + event.eventID);
+                            if (!err) {
+                                saveSeatsOfActiveTickets(ticketObject);
+                                saveSeatsofSoldTickets(ticketObject);
+                            }
                         });
-                        let date = new Date(nowDate);
-                        let rdate = date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate();
-                        ticketsModel.deleteMany({ eventID: event.eventID, date: rdate }, (err, data) => {
-                            let ticketObject = new ticketsModel();
-                            ticketObject.eventID = event.eventID;
-                            ticketObject.date = rdate;
-                            ticketObject.totalListings = eventData.totalListings;
-                            ticketObject.totalTickets = eventData.totalTickets;
-                            ticketObject.minTicketPrice = (eventData.pricingSummary) ? eventData.pricingSummary.minTicketPriceWithCurrency.amount : '';
-                            ticketObject.maxTicketPrice = (eventData.pricingSummary) ? eventData.pricingSummary.maxTicketPriceWithCurrency.amount : '';
-                            ticketObject.averageTicketPrice = (eventData.pricingSummary) ? eventData.pricingSummary.averageTicketPriceWithCurrency.amount : '';
-                            ticketObject.medianTicketPrice = (eventData.pricingSummary) ? eventData.pricingSummary.medianTicketPriceWithCurrency.amount : '';
-                            ticketObject.save((err) => { console.log('ticket infor saved at ' + rdate + ' of ' + event.eventID) });
-                        })
-
                     }
                 })
 
@@ -191,52 +191,6 @@ class mainController {
 
         })
         res.send("ok");
-    }
-
-    async saveSoldTickets(req, res) {
-
-    }
-
-    async saveSeatsOfActiveEvents(req, res) {
-        var nowDate = new Date().toLocaleString('en-US', {
-            timeZone: 'America/New_York'
-        });
-        var date = new Date(nowDate);
-        var rdate = date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate();
-        ticketsModel.find({ date: rdate }, (err, tickets) => {
-            tickets.forEach(ticket => {
-                let totalListings = ticket.totalListings;
-                if (totalListings > 0) {
-                    let nums = Math.floor(totalListings / 200) + 1;
-                    let rows = 200;
-                    for (let i = 0; i < nums; i++) {
-                        let start = i * rows;
-                        if (start + rows > totalListings) rows = totalListings - start;
-                        stubhub.getActiveTicketsById(ticket.eventID, start, rows).then((ticketData) => {
-                            if (ticketData) {
-                                ticketData.listing.forEach(list => {
-                                    let seatObject = new seatsModel();
-                                    seatObject.eventID = ticket.eventID;
-                                    seatObject.section = list.sectionName;
-                                    seatObject.price = list.currentPrice.amount;
-                                    seatObject.row = list.row;
-                                    seatObject.quantity = list.quantity;
-                                    seatObject.date = rdate;
-                                    seatObject.deliveryMethodList = list.deliveryMethodList;
-                                    seatObject.deliveryTypeList = list.deliveryTypeList;
-                                    seatObject.save((err) => { console.log('seat details saved') })
-                                });
-                            }
-                        })
-                            .catch((err) => {
-                            })
-                    }
-                }
-
-            });
-
-        })
-        res.send('ok');
     }
 
     async getEventInternalDetails(req, res) {
@@ -272,6 +226,67 @@ async function siteLogin() {
         let response = await stubhub.login();
         return response;
     } else return 'Loggedin';
+}
+
+function saveSeatsOfActiveTickets(ticket) {
+    let totalListings = ticket.totalListings;
+    if (totalListings > 0) {
+        let nums = Math.floor(totalListings / 200) + 1;
+        let rows = 200;
+        for (let i = 0; i < nums; i++) {
+            let start = i * rows;
+            if (start + rows > totalListings) rows = totalListings - start;
+            stubhub.getActiveTicketsById(ticket.eventID, start, rows).then((ticketData) => {
+                if (ticketData) {
+                    ticketData.listing.forEach(list => {
+                        let seatObject = new seatsModel();
+                        seatObject.eventID = ticket.eventID;
+                        seatObject.section = list.sectionName;
+                        seatObject.ticketID = ticket._id;
+                        seatObject.price = list.currentPrice.amount;
+                        seatObject.row = list.row;
+                        seatObject.quantity = list.quantity;
+                        seatObject.date = ticket.datetime;
+                        seatObject.deliveryMethodList = list.deliveryMethodList;
+                        seatObject.deliveryTypeList = list.deliveryTypeList;
+                        seatObject.save((err) => { console.log('seat details saved') })
+                    });
+                }
+            })
+                .catch((err) => {
+                })
+        }
+    }
+}
+
+function saveSeatsofSoldTickets(ticket) {
+    stubhub.getSoldTicketsById(ticket.eventID).then((ticketData) => {
+        if (ticketData) {
+            ticketsModel.findOne({_id: ticket._id}, (rerr, rticket) => {
+                rticket.soldNum = ticketData.sales.numFound;
+                rticket.save((e) => {});
+            })
+            ticketData.sales.sale.forEach(list => {
+                let soldseatObject = new soldseatsModel();
+                soldseatObject.eventID = ticket.eventID;
+                soldseatObject.ticketID = ticket._id;
+                soldseatObject.quantity = list.quantity;
+                soldseatObject.section = list.section;
+                soldseatObject.rows = list.rows;
+                soldseatObject.deliveryOption = list.deliveryOption;
+                soldseatObject.deliveryTypeId = list.deliveryTypeId;
+                soldseatObject.deliveryMethodId = list.deliveryMethodId;
+                soldseatObject.displayPricePerTicket = list.displayPricePerTicket.amount;
+                soldseatObject.stubhubMobileTicket = list.stubhubMobileTicket;
+                soldseatObject.sectionId = list.sectionId;
+                soldseatObject.transactionDate = list.transactionDate;
+                soldseatObject.save((err) => {
+                    if (!err) { console.log('sold seat info saved'); }
+                });
+            })
+
+        }
+    });
 }
 
 
