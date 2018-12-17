@@ -31,7 +31,7 @@ class stubhubApi {
         return sessionID;
     }
 
-    openSite() {
+    async openSite() {
         let url = 'https://www.stubhub.com/';
         const options = {
             url: url,
@@ -44,6 +44,35 @@ class stubhubApi {
         return new Promise((resolve, reject) => {
             request(options, (err, response, body) => {
                 if (err) reject(err);
+                resolve(body);
+            });
+        })
+    }
+
+    async sendRecapcha(url, dCF_ticket, g_recaptcha_response) {
+        var options = {
+            method: 'POST',
+            url: 'https://www.stubhub.com' + url,
+            headers:
+            {
+                'cache-control': 'no-cache',
+                'accept-encoding': 'gzip, deflate, br',
+                'accept-language': 'en-US,en;q=0.9',
+                'accept': '*/*',
+                'content-type': 'application/x-www-form-urlencoded',
+                'origin': 'https://www.stubhub.com',
+                'referer': 'https://www.stubhub.com/my/profile/',
+                'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.80 Safari/537.36',
+                'x-distil-ajax': 'yyqvbuqewxtcufrxveb'
+            },
+            form: { 'dCF_ticket': dCF_ticket, 'g-recaptcha-response': g_recaptcha_response, 'isAjax': 1, 'remoteip': '106.186.116.219' },
+            jar: jar
+        };
+        return new Promise((resolve, reject) => {
+            console.log('recapcha sending');
+            request(options, (err, response, body) => {
+                if (err) reject(err);
+                // console.log(body)
                 resolve(body);
             });
         })

@@ -7,6 +7,7 @@ var csv = require('fast-csv');
 var fs = require('fs');
 var stubhubApi = require('../apis/stubhubApi');
 var stubhub = new stubhubApi();
+var cheerio = require('cheerio');
 
 class mainController {
     constructor() { }
@@ -143,9 +144,21 @@ class mainController {
     }
 
     async loginTest(req, res) {
-        await stubhub.openSite();
-        let loginStatus = await stubhub.Testlogin();
-        res.send(loginStatus);
+        let siteHTML = await stubhub.openSite();
+        if (siteHTML.indexOf('dCF_ticket') > 0) {
+            const $ = cheerio.load(siteHTML);
+            let url = $('#distilCaptchaForm').attr('action');
+            // let dCF_ticket = $('#dCF_ticket').attr('value');
+            let dCF_ticket = '1.0&CFAEk9aQXF+Cp/EZ4BTfAqf12oDEAcQ5NjRrROnDjpsGTU0TqU6doyl+IRigbP9PQIjFjj00ILp4SYSBrjCZLTFo3fNrJNV5AHBAYlleVmFBRvfVRqEwQsruhJJijfjCe2XpqCzZZk+X5dxu1JOygucKyGPqRIg/1mZh3lK46xI=';
+            let g_recaptcha_response = '03AO9ZY1DTx2pvfjHSibT07HanDGiaanDrruRTialjKfhkzoH7rtfr3RmWZpluTRAmGJPIQ9Q3jOeQv-VTavVJ7N0qaTr4e2FEjm1rqUcyUYAL3s-THm4Ir14a-RVDov0pztfkdEFLYl_agF4Ver-BPSY2jRrbVyPjEQNWUeVRZjxQOCEuuFf9r4p3tJzweZk87U0SKfqZQ7sAX3xFdAB6gHRUTjoHNJrHwvV5qwD7v-PG4SicSDg3kjr55lZCKI7_dk2ciqcAexTSAYlQT2S_PY8E457kBl_UXeLJz82q0CI53bef1cu0l8dP3JhJC5Zav7m0tksck3I8';
+            let hh = await stubhub.sendRecapcha(url, dCF_ticket, g_recaptcha_response);
+            let newsiteHTML = await stubhub.openSite();
+            res.send(hh);
+        } else {
+            let loginStatus = await stubhub.Testlogin();
+            res.send(loginStatus);
+        }
+
     }
 
     async saveActiveTickets(req, res) {
@@ -210,6 +223,7 @@ class mainController {
                                     seatObject.quantity = list.quantity;
                                     seatObject.date = rdate;
                                     seatObject.deliveryMethodList = list.deliveryMethodList;
+                                    seatObject.deliveryTypeList = list.deliveryTypeList;
                                     seatObject.save((err) => { console.log('seat details saved') })
                                 });
                             }
