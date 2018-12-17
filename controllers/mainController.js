@@ -147,6 +147,7 @@ class mainController {
     async loginTest(req, res) {
         let siteHTML = await stubhub.openSite();
         if (siteHTML.indexOf('dCF_ticket') > 0) {
+            console.log('google captcha')
             const $ = cheerio.load(siteHTML);
             let url = $('#distilCaptchaForm').attr('action');
             // let dCF_ticket = $('#dCF_ticket').attr('value');
@@ -178,7 +179,7 @@ class mainController {
                         ticketObject.averageTicketPrice = (eventData.pricingSummary) ? eventData.pricingSummary.averageTicketPriceWithCurrency.amount : '';
                         ticketObject.medianTicketPrice = (eventData.pricingSummary) ? eventData.pricingSummary.medianTicketPriceWithCurrency.amount : '';
                         ticketObject.save((err) => {
-                            console.log('ticket infor saved at ' + nowDateTime + ' of ' + event.eventID);
+                            // console.log('ticket infor saved at ' + nowDateTime + ' of ' + event.eventID);
                             if (!err) {
                                 saveSeatsOfActiveTickets(ticketObject);
                                 saveSeatsofSoldTickets(ticketObject);
@@ -206,7 +207,9 @@ class mainController {
                         event.venue.country = (eventData.venue && eventData.venue.country) ? eventData.venue.country : '';
                         event.image = (eventData.images) ? eventData.images[0].url : '';
                         event.eventDate = (eventData.eventDateUTC) ? eventData.eventDateUTC : '';
-                        event.save((err) => { console.log('event datail saved') });
+                        event.save(
+                            // (err) => { console.log('event datail saved') }
+                        );
                     }
                 })
 
@@ -242,6 +245,7 @@ function saveSeatsOfActiveTickets(ticket) {
                         let seatObject = new seatsModel();
                         seatObject.eventID = ticket.eventID;
                         seatObject.section = list.sectionName;
+                        seatObject.sectionId = list.sectionId;
                         seatObject.ticketID = ticket._id;
                         seatObject.price = list.currentPrice.amount;
                         seatObject.row = list.row;
@@ -249,7 +253,9 @@ function saveSeatsOfActiveTickets(ticket) {
                         seatObject.date = ticket.datetime;
                         seatObject.deliveryMethodList = list.deliveryMethodList;
                         seatObject.deliveryTypeList = list.deliveryTypeList;
-                        seatObject.save((err) => { console.log('seat details saved') })
+                        seatObject.save(
+                            // (err) => { console.log('seat details saved') }
+                        )
                     });
                 }
             })
@@ -262,10 +268,9 @@ function saveSeatsOfActiveTickets(ticket) {
 function saveSeatsofSoldTickets(ticket) {
     stubhub.getSoldTicketsById(ticket.eventID).then((ticketData) => {
         if (ticketData) {
-            ticketsModel.findOne({_id: ticket._id}, (rerr, rticket) => {
-                rticket.soldNum = ticketData.sales.numFound;
-                rticket.save((e) => {});
-            })
+            ticket.soldNum = ticketData.sales.numFound;
+            ticket.save((e) => { console.log('soldNum updated.'); });
+            
             ticketData.sales.sale.forEach(list => {
                 let soldseatObject = new soldseatsModel();
                 soldseatObject.eventID = ticket.eventID;
@@ -281,7 +286,7 @@ function saveSeatsofSoldTickets(ticket) {
                 soldseatObject.sectionId = list.sectionId;
                 soldseatObject.transactionDate = list.transactionDate;
                 soldseatObject.save((err) => {
-                    if (!err) { console.log('sold seat info saved'); }
+                    // if (!err) { console.log('sold seat info saved'); }
                 });
             })
 
