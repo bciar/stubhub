@@ -8,6 +8,8 @@ var seatsSchema = mongoose.Schema({
   date: String,
   section: String,
   sectionId: String,
+  zoneId: String,
+  zone: String,
   price: Number,
   row: String,
   quantity: Number,

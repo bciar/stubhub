@@ -44,12 +44,17 @@
                         <%=event.name%>
                     </td>
                     <td>
-                        <%=event.eventDate%>
+                        <% var cdate = new Date(event.eventDate).toLocaleString('en-US', {
+                            timeZone: 'America/New_York'
+                        }); %>
+                        <%=cdate%>
                     </td>
-                    <td style="width: 200px;"><%=' ' + event.venue.name + ', ' + event.venue.city + ', ' + event.venue.state%></td>
+                    <td style="width: 200px;">
+                        <%=' ' + event.venue.name + ', ' + event.venue.city + ', ' + event.venue.state%>
+                    </td>
                     <td class="text-center">
-                        <a href="https://pro.stubhub.com/simweb/sim/services/priceanalysis?<%=event.eventID%>" target="_blank"><button class="btn btn-success" title="Visit Site"><i
-                                    class="fas fa-location-arrow"></i></button></a>
+                        <a href="https://pro.stubhub.com/simweb/sim/services/priceanalysis?<%=event.eventID%>" target="_blank"><button
+                                class="btn btn-success" title="Visit Site"><i class="fas fa-location-arrow"></i></button></a>
                         <a href="/tickets/<%=event.eventID%>"><button class="btn btn-success" title="View Tickets"><i
                                     class="fas fa-align-justify"></i></button></a>
                     </td>

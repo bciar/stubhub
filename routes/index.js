@@ -45,7 +45,9 @@ router.post('/event/addSingle', isLoggedIn, main.addsingleEvent);
 router.get('/tickets/:eventID', isLoggedIn, main.ticketPage);
 router.get('/viewEventDetails/:eventID', isLoggedIn, main.viewEventDetails);
 router.get('/viewTicketDetails/:eventID', isLoggedIn, main.viewTicketDetails);
-router.post('/viewSeatDetails', isLoggedIn, main.viewSeatDetails);
+
+router.post('/viewActiveSeatDetails', isLoggedIn, main.viewActiveSeatDetails);
+router.post('/viewSoldSeatDetails', isLoggedIn, main.viewSoldSeatDetails);
 // //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 router.get('/loginStubhub', main.loginStubhub);

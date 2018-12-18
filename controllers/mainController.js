@@ -98,10 +98,21 @@ class mainController {
         })
     }
 
-    viewSeatDetails(req, res) {
-        let eventID = req.body.eventID;
-        let date = req.body.date;
-        seatsModel.find({ eventID: eventID, date: date }, (err, seats) => {
+    viewActiveSeatDetails(req, res) {
+        let ticketID = req.body.ticketID;
+        seatsModel.find({ ticketID: ticketID }, (err, seats) => {
+            if (err) {
+                res.json({ status: 'failed', data: [] });
+            }
+            else {
+                res.json({ status: 'success', data: seats });
+            }
+        })
+    }
+
+    viewSoldSeatDetails(req, res) {
+        let ticketID = req.body.ticketID;
+        soldseatsModel.find({ ticketID: ticketID }, (err, seats) => {
             if (err) {
                 res.json({ status: 'failed', data: [] });
             }
@@ -246,6 +257,8 @@ function saveSeatsOfActiveTickets(ticket) {
                         seatObject.eventID = ticket.eventID;
                         seatObject.section = list.sectionName;
                         seatObject.sectionId = list.sectionId;
+                        seatObject.zoneId = list.zoneId;
+                        seatObject.zone = list.zone;
                         seatObject.ticketID = ticket._id;
                         seatObject.price = list.currentPrice.amount;
                         seatObject.row = list.row;
@@ -270,7 +283,7 @@ function saveSeatsofSoldTickets(ticket) {
         if (ticketData) {
             ticket.soldNum = ticketData.sales.numFound;
             ticket.save((e) => { console.log('soldNum updated.'); });
-            
+
             ticketData.sales.sale.forEach(list => {
                 let soldseatObject = new soldseatsModel();
                 soldseatObject.eventID = ticket.eventID;
