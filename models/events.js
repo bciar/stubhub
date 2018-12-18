@@ -14,12 +14,20 @@ var eventsSchema = mongoose.Schema({
     country: String
   },
   image: String,
-  eventDate: String
-}, {
-  timestamps: {
-    createdAt: 'created_at'
+  eventDate: String,
+  pullFrequency: {
+    ftype: Number,//1 default, 2 customized
+    frequencies: []
+  },
+  lastPullTime: {
+    type: String,
+    default: ''
   }
-});
+}, {
+    timestamps: {
+      createdAt: 'created_at'
+    }
+  });
 
 // create the model for transaction and expose it to our app
 module.exports = mongoose.model('eventsModel', eventsSchema);

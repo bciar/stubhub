@@ -77,3 +77,19 @@
   margin-right: 10px;
   width: 120px;
 }
+
+.add-condition{
+  margin-top: 42px;
+  cursor: pointer;
+  color: royalblue;
+}
+.remove-condition{
+  margin-top: 42px;
+  cursor: pointer;
+  color: red;
+  margin-left: 10px;
+}
+.modal-notice{
+  margin-left: 40px;  
+  color: burlywood;
+}

@@ -9,6 +9,7 @@ var fs = require('fs');
 var stubhubApi = require('../apis/stubhubApi');
 var stubhub = new stubhubApi();
 var cheerio = require('cheerio');
+var request = require('request');
 
 class mainController {
     constructor() { }
@@ -34,6 +35,11 @@ class mainController {
                     eventsModel.find({ eventID: eventID }, (err, data) => {
                         if (data.length == []) {
                             newEvent.eventID = eventID;
+                            updateEventInfo(eventID);
+                            newEvent.pullFrequency = {
+                                ftype: 1,
+                                frequencies: []
+                            };
                             newEvent.save((err) => {
                                 count++;
                                 if (count == fileRows.length) res.redirect('/');
@@ -54,12 +60,63 @@ class mainController {
         eventsModel.find({ eventID: eventID }, (err, data) => {
             if (data.length == []) {
                 newEvent.eventID = eventID;
+                newEvent.pullFrequency = {
+                    ftype: 1,
+                    frequencies: []
+                };
+                //call api to save event information and save tickets
+                updateEventInfo(eventID);
                 newEvent.save((err) => {
                     res.redirect('/');
                 });
             } else {
                 res.redirect('/');
             }
+        })
+    }
+
+    addFrequency(req, res) {
+        let eventID = req.params.eventID;
+        let data = req.body;
+        let frequencies = [];
+        if (!Array.isArray(data.start_date)) data.start_date = [data.start_date];
+        if (!Array.isArray(data.end_date)) data.end_date = [data.end_date];
+        if (!Array.isArray(data.frequency)) data.frequency = [data.frequency];
+        for (let i = 0; i < data.start_date.length; i++) {
+            let start_date = data.start_date[i];
+            let end_date = data.end_date[i];
+            let frequency = data.frequency[i];
+            let cstart = new Date(start_date);
+            let cend = new Date(end_date);
+            if (cstart <= cend) {
+                //save to db;
+                frequencies.push(
+                    {
+                        start: start_date,
+                        end: end_date,
+                        frequency: frequency
+                    }
+                );
+            }
+        }
+        if (frequencies.length > 0) {
+            eventsModel.findOne({ eventID: eventID }, (err, event) => {
+                event.pullFrequency.ftype = 2;
+                event.pullFrequency.frequencies = frequencies;
+                event.save((err) => {
+                    res.redirect('/');
+                });
+            })
+        } else {
+            res.redirect('/');
+        }
+
+    }
+
+    getEventData(req, res) {
+        let eventID = req.params.eventID;
+        eventsModel.findOne({ eventID: eventID }, (err, event) => {
+            res.json(event);
         })
     }
 
@@ -305,6 +362,13 @@ function saveSeatsofSoldTickets(ticket) {
 
         }
     });
+}
+
+function updateEventInfo(eventID) {
+    request.get(process.env.PRODUCT_SERVER_URL + '/getEventInternalDetailsById/' + eventID, (err, response) => {
+    })
+    request.get(process.env.PRODUCT_SERVER_URL + '/saveTicketsById/' + eventID, (err, response) => {
+    })
 }
 
 
