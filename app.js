@@ -68,17 +68,5 @@ app.use(function (err, req, res, next) {
   res.render('error');
 });
 
-//cron
-new CronJob('0 0 23 * * *', function () {
-//   var nowDate = new Date().toLocaleString('en-US', {
-//     timeZone: 'America/New_York'
-// });
-  // console.log("running a task every midnight");
-  // request.get(process.env.PRODUCT_SERVER_URL + '/saveEvents', (err, response) => {
-  //   console.log('saveEvents')
-  //   request.get(process.env.PRODUCT_SERVER_URL + '/saveTickets', (err, response) => {
-  //     console.log('saveTickets')
-  //   })
-  // })
-}, null, true, 'America/New_York');
+
 module.exports = app;
