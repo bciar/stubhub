@@ -16,7 +16,8 @@ class mainController {
 
     index(req, res) {
         eventsModel.find({}, (err, data) => {
-            res.render('home', { events: data });
+            res.json(data);
+            // res.render('home', { events: data });
         })
     }
 
