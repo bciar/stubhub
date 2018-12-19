@@ -31,16 +31,16 @@ class mainController {
             .on("end", function () {
                 let count = 0;
                 fileRows.forEach(eventID => {
-                    let newEvent = new eventsModel();
                     eventsModel.find({ eventID: eventID }, (err, data) => {
                         if (data.length == []) {
+                            let newEvent = new eventsModel();
                             newEvent.eventID = eventID;
-                            updateEventInfo(eventID);
                             newEvent.pullFrequency = {
                                 ftype: 1,
                                 frequencies: []
                             };
                             newEvent.save((err) => {
+                                updateEventInfo(eventID);
                                 count++;
                                 if (count == fileRows.length) res.redirect('/');
                             });
@@ -59,14 +59,15 @@ class mainController {
         let eventID = req.body.eventID;
         eventsModel.find({ eventID: eventID }, (err, data) => {
             if (data.length == []) {
+                let newEvent = new eventsModel();
                 newEvent.eventID = eventID;
                 newEvent.pullFrequency = {
                     ftype: 1,
                     frequencies: []
                 };
                 //call api to save event information and save tickets
-                updateEventInfo(eventID);
                 newEvent.save((err) => {
+                    updateEventInfo(eventID);
                     res.redirect('/');
                 });
             } else {
@@ -365,10 +366,10 @@ function saveSeatsofSoldTickets(ticket) {
 }
 
 function updateEventInfo(eventID) {
-    request.get(process.env.PRODUCT_SERVER_URL + '/getEventInternalDetailsById/' + eventID, (err, response) => {
-    })
-    request.get(process.env.PRODUCT_SERVER_URL + '/saveTicketsById/' + eventID, (err, response) => {
-    })
+    // request.get(process.env.PRODUCT_SERVER_URL + '/getEventInternalDetailsById/' + eventID, (err, response) => {
+    // })
+    // request.get(process.env.PRODUCT_SERVER_URL + '/saveTicketsById/' + eventID, (err, response) => {
+    // })
 }
 
 
