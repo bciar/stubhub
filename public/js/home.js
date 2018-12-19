@@ -15,7 +15,7 @@ $(function () {
     $('#SaveSingleEvent').click(() => {
 
         let id = $('#singleEventInput').val();
-        if (id == '' || id.length != 16) {
+        if (id == '' || id.length != 9) {
             $('#singleEventInput').focus();
         } else {
             showloading();
@@ -27,8 +27,10 @@ $(function () {
                     eventID: id
                 },
                 success: function (res) {
-                    endloading();
-                    location.href = '/events';
+                    setTimeout(() => {
+                        endloading();
+                        location.href = '/';
+                    }, 2000);
                 }
             });
         }
