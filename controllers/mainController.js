@@ -366,10 +366,10 @@ function saveSeatsofSoldTickets(ticket) {
 }
 
 function updateEventInfo(eventID) {
-    // request.get(process.env.PRODUCT_SERVER_URL + '/getEventInternalDetailsById/' + eventID, (err, response) => {
-    // })
-    // request.get(process.env.PRODUCT_SERVER_URL + '/saveTicketsById/' + eventID, (err, response) => {
-    // })
+    request.get(process.env.PRODUCT_SERVER_URL + '/getEventInternalDetailsById/' + eventID, (err, response) => {
+    })
+    request.get(process.env.PRODUCT_SERVER_URL + '/saveTicketsById/' + eventID, (err, response) => {
+    })
 }
 
 
