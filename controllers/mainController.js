@@ -366,9 +366,12 @@ function saveSeatsofSoldTickets(ticket) {
 }
 
 function updateEventInfo(eventID) {
+    let nowDateTime = new Date().toLocaleString('en-US', {
+        timeZone: 'America/New_York'
+    });
     request.get(process.env.PRODUCT_SERVER_URL + '/getEventInternalDetailsById/' + eventID, (err, response) => {
     })
-    request.get(process.env.PRODUCT_SERVER_URL + '/saveTicketsById/' + eventID, (err, response) => {
+    request.get(process.env.PRODUCT_SERVER_URL + '/saveTicketsById/' + eventID + '?datetime=' + nowDateTime, (err, response) => {
     })
 }
 
