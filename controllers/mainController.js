@@ -109,7 +109,13 @@ class mainController {
                 });
             })
         } else {
-            res.redirect('/');
+            eventsModel.findOne({ eventID: eventID }, (err, event) => {
+                event.pullFrequency.ftype = 1;
+                event.pullFrequency.frequencies = [];
+                event.save((err) => {
+                    res.redirect('/');
+                });
+            })
         }
 
     }
