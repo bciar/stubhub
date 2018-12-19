@@ -43,6 +43,8 @@ function isLoggedIn(req, res, next) {
 router.post('/events/uploadcsv', upload.single('file'), main.uploadcsv);
 router.post('/event/addSingle', isLoggedIn, main.addsingleEvent);
 router.post('/event/:eventID/addFrequency', isLoggedIn, main.addFrequency);
+router.post('/event/addFrequencies', isLoggedIn, main.addFrequencies);
+router.post('/events/remove', isLoggedIn, main.removeEvents);
 router.get('/getEventData/:eventID', isLoggedIn, main.getEventData);
 router.get('/tickets/:eventID', isLoggedIn, main.ticketPage);
 router.get('/viewEventDetails/:eventID', isLoggedIn, main.viewEventDetails);
@@ -50,16 +52,10 @@ router.get('/viewTicketDetails/:eventID', isLoggedIn, main.viewTicketDetails);
 
 router.post('/viewActiveSeatDetails', isLoggedIn, main.viewActiveSeatDetails);
 router.post('/viewSoldSeatDetails', isLoggedIn, main.viewSoldSeatDetails);
+
+
+
 // //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-// router.get('/loginStubhub', main.loginStubhub);
-// router.get('/getEventInternalDetails', main.getEventInternalDetails);
-// router.get('/saveTickets', main.saveTickets);
-// router.get('/saveSeatsOfActiveTickets', main.saveSeatsOfActiveTickets);
-// router.get('/saveSeatsofSoldTickets', main.saveSeatsofSoldTickets);
-// router.get('/loginTest', main.loginTest);
-
-//////////////////////////////////////////////////////////////////  admin //////////////////////////////////////////////////////////////////
 
 router.get('/admin/users', isAdminLoggedIn, admin.users);
 router.get('/admin/dashboard', isAdminLoggedIn, admin.dashboard);

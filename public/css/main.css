@@ -91,5 +91,12 @@
 }
 .modal-notice{
   margin-left: 40px;  
-  color: burlywood;
+  color: #28a745;
+  width: 100%;
+}
+.checkbox{
+}
+
+.dropdown-item:hover{
+  background-color: cadetblue;
 }

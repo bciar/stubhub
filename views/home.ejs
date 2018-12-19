@@ -22,6 +22,17 @@
             <thead>
                 <th class="th-sm">No
                 </th>
+                <th style="background: none;text-align:center;">
+                    <input type="checkbox" id="checkAll">
+                    <div class="dropdown">
+                        <i class="fas fa-plus-circle" title="Action" id="dropdownMenuButton"
+                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></i>
+                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                            <p class="dropdown-item" onclick="removeSelectedEvents();">Remove selected events</p>
+                            <p class="dropdown-item" onclick="editSelectedFrequency();">Edit pulling frequency</p>
+                        </div>
+                    </div>
+                </th>
                 <th class="th-sm">EventID
                 </th>
                 <th class="th-sm">Name</th>
@@ -34,10 +45,13 @@
             <tbody>
                 <% for(let i = 0; i < events.length; i++) { let event = events[i]; %>
                 <tr>
-                    <td>
+                    <td style="text-align: center;">
                         <%=i+1%>
                     </td>
-                    <td>
+                    <td style="text-align: center;">
+                        <input type="checkbox" class="checkbox" name="" data-eventID="<%=event.eventID%>">
+                    </td>
+                    <td style="text-align: center;">
                         <%=event.eventID%>
                     </td>
                     <td>
@@ -98,6 +112,7 @@
 <div class="modal fade" id="settingModal" tabindex="-1" role="dialog" aria-labelledby="settingModal" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document" style="max-width:800px;">
         <form action="" method="POST" id="frequencyFrom">
+            <input type="hidden" name="multipleFrequencies" id="multipleFrequencies" value="">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="exampleModalLongTitle">Set time frequency</h5>
@@ -108,6 +123,7 @@
                 <div class="modal-body">
                     <div class="row">
                         <p class="modal-notice">By default, event data will be updated at 7:00pm every day.</p>
+                        <p class="modal-notice" id="fr-modalmultiselect"></p>
                     </div>
                     <div id="condition-body" class="row">
                         <!-- <div class="col-md-12">
@@ -139,7 +155,8 @@
                     </div>
 
                     <div class="row m-3">
-                        <i class="fas fa-plus-circle add-condition" title="Add new condition" onclick="addNewCondition()">Add New Condition</i>
+                        <i class="fas fa-plus-circle add-condition" title="Add new condition" onclick="addNewCondition()">Add
+                            New Condition</i>
                     </div>
                 </div>
                 <div class="modal-footer">

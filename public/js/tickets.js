@@ -77,4 +77,3 @@ function viewSoldSeats(ticketID) {
         }
     })
 }
-s

@@ -55,6 +55,22 @@ class mainController {
             })
     }
 
+    removeEvents(req, res) {
+        let eventIDs = JSON.parse(req.body.eventIDs);
+        let i = 0;
+        let count = eventIDs.length;
+        eventIDs.forEach(eventID => {
+            eventsModel.deleteMany({ eventID: eventID }, (err, data) => {
+                ticketsModel.deleteMany({ eventID: eventID }, (err2, data2) => {
+                    soldseatsModel.deleteMany({ eventID: eventID }, (err3, data3) => {
+                        i++;
+                        if (i == count) res.send('ok');
+                    })
+                })
+            })
+        });
+    }
+
     addsingleEvent(req, res) {
         let eventID = req.body.eventID;
         eventsModel.find({ eventID: eventID }, (err, data) => {
@@ -117,6 +133,64 @@ class mainController {
                 });
             })
         }
+
+    }
+
+    addFrequencies(req, res) {
+        let eventIDs = JSON.parse(req.body.multipleFrequencies);
+        let data = req.body;
+        let frequencies = [];
+        if (!Array.isArray(data.start_date)) data.start_date = [data.start_date];
+        if (!Array.isArray(data.end_date)) data.end_date = [data.end_date];
+        if (!Array.isArray(data.frequency)) data.frequency = [data.frequency];
+        for (let i = 0; i < data.start_date.length; i++) {
+            let start_date = data.start_date[i];
+            let end_date = data.end_date[i];
+            let frequency = data.frequency[i];
+            let cstart = new Date(start_date);
+            let cend = new Date(end_date);
+            if (cstart <= cend) {
+                //save to db;
+                frequencies.push(
+                    {
+                        start: start_date,
+                        end: end_date,
+                        frequency: frequency
+                    }
+                );
+            }
+        }
+
+        if (frequencies.length > 0) {
+            let count = 0;
+            eventIDs.forEach(eventID => {
+                eventsModel.findOne({ eventID: eventID }, (err, event) => {
+                    event.pullFrequency.ftype = 2;
+                    event.pullFrequency.frequencies = frequencies;
+                    event.save((err) => {
+                        count++;
+                        if (count == eventIDs.length)
+                            res.redirect('/');
+                    });
+                })
+            });
+
+        } else {
+            let count = 0;
+            eventIDs.forEach(eventID => {
+                eventsModel.findOne({ eventID: eventID }, (err, event) => {
+                    event.pullFrequency.ftype = 1;
+                    event.pullFrequency.frequencies = [];
+                    event.save((err) => {
+                        count++;
+                        if (count == eventIDs.length)
+                            res.redirect('/');
+                    });
+                })
+            });
+        }
+
+
 
     }
 
