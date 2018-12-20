@@ -147,12 +147,28 @@ function editSelectedFrequency() {
         $('#condition-body').html(divRows);
         $('#multipleFrequencies').val(JSON.stringify(eventIDs));
         $('#frequencyFrom').attr('action', '/event/addFrequencies');
-        $('#fr-modalmultiselect').html('You selected these events: <br>'+eventIDs);
+        $('#fr-modalmultiselect').html('You selected these events: <br>' + eventIDs);
         $('#settingModal').modal();
         $('.datepicker').datepicker({
             format: 'mm/dd/yyyy',
             container: '#settingModal'
         });
     }
+}
 
+function openNewTab() {
+    let checkboxItems = $(".checkbox");
+    let eventIDs = [];
+    for (let i = 0; i < checkboxItems.length; i++) {
+        let row = $(checkboxItems[i]);
+        if (row.prop('checked') == true) {
+            eventIDs.push(row.attr('data-eventID'));
+        }
+    };
+    eventIDs.forEach(eventID => {
+        window.open(
+            '/tickets/'+eventID,
+            '_blank' 
+          );
+    });
 }

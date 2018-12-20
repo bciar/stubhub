@@ -1,9 +1,9 @@
 <% layout('./layout/app') -%>
 <div class="row">
     <div class="col-md-5 mt-3">
-        <button type="button" class="btn btn-primary">
+        <!-- <button type="button" class="btn btn-primary">
             Download CSV
-        </button>
+        </button> -->
     </div>
     <div class="col-md-7 mt-3">
         <div class="col-md-5 float-left">
@@ -30,6 +30,8 @@
                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                             <p class="dropdown-item" onclick="removeSelectedEvents();">Remove selected events</p>
                             <p class="dropdown-item" onclick="editSelectedFrequency();">Edit pulling frequency</p>
+                            <p class="dropdown-item" onclick="openNewTab();">Open in new tab</p>
+
                         </div>
                     </div>
                 </th>
