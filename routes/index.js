@@ -42,8 +42,12 @@ function isLoggedIn(req, res, next) {
 
 router.post('/events/uploadcsv', upload.single('file'), main.uploadcsv);
 router.post('/event/addSingle', isLoggedIn, main.addsingleEvent);
+
+router.get('/event/:eventID/exportcsv', isLoggedIn, main.exportcsvSingle);
+
 router.post('/event/:eventID/addFrequency', isLoggedIn, main.addFrequency);
 router.post('/event/addFrequencies', isLoggedIn, main.addFrequencies);
+
 router.post('/events/remove', isLoggedIn, main.removeEvents);
 router.get('/getEventData/:eventID', isLoggedIn, main.getEventData);
 router.get('/tickets/:eventID', isLoggedIn, main.ticketPage);

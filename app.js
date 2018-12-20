@@ -20,7 +20,7 @@ require('dotenv').config();
 
 const MONGOURL = process.env.MONGODB_URI || 'mongodb://localhost/stubhub';
 
-mongoose.connect(MONGOURL, err => {
+mongoose.connect(MONGOURL, { useNewUrlParser: true }, err => {
   console.error(err || `Connected to MongoDB: ${MONGOURL}`);
 });
 
