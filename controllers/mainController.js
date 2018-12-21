@@ -95,27 +95,43 @@ class mainController {
     exportcsvSingle(req, res) {
         let eventID = req.params.eventID;
         var data = [];
-        data.push(["Event ID", "Timestamp", "Total Listings", "Total Tickets", "minTicketPrice", "maxTicketPrice", "averageTicketPrice", "medianTicketPrice"]);
+        data.push(["Event ID", "Timestamp", "Total Listings", "Total Tickets", "minTicketPrice", "averageTicketPrice", "medianTicketPrice", "Sold", "Sold Volume"]);
         ticketsModel.find({ eventID: eventID }, (err, tickets) => {
+            let count = 0;
             tickets.forEach(ticket => {
-                let row = [ticket.eventID, ticket.datetime, ticket.totalListings, ticket.totalTickets, ticket.minTicketPrice, ticket.maxTicketPrice, ticket.averageTicketPrice, ticket.medianTicketPrice];
-                data.push(row);
-            });
-            //add sold seats info
-            data.push([" ", " ", " ", " ", " ", " ", " ", " "]);
-            data.push(["section", "price", "rows", "quantity", "delivery", "transactionDate", " ", " "]);
-            soldseatsModel.find({ eventID: eventID }, (err, seats) => {
-                if (seats && seats.length > 0) {
-                    seats.forEach(seat => {
-                        var seatdate = new Date(seat.transactionDate).toLocaleString('en-US', {
-                            timeZone: 'America/New_York'
+                soldseatsModel.find({ ticketID: ticket._id }, (err, seats) => {
+                    let volume = 0;
+                    if (seats.length > 0) {
+                        seats.forEach(seat => {
+                            volume = volume + seat.displayPricePerTicket * seat.quantity;
                         });
-                        let row = [seat.section, seat.displayPricePerTicket, seat.rows, seat.quantity, seat.deliveryOption, seatdate, "", ""];
-                        data.push(row);
-                    });
-                }
-                downloadF(data, res, 'stubhub' + eventID);
-            })
+                    }
+                    count++;
+                    let row = [ticket.eventID, ticket.datetime, ticket.totalListings, ticket.totalTickets, ticket.minTicketPrice, ticket.averageTicketPrice, ticket.medianTicketPrice, ticket.soldNum, volume];
+                    data.push(row);
+                    if (count == tickets.length) {
+                        /////
+                        //add sold seats info
+                        data.push([" ", " ", " ", " ", " ", " ", " ", " "]);
+                        data.push(["section", "price", "rows", "quantity", "delivery", "transactionDate", " ", " ", " "]);
+                        soldseatsModel.find({ eventID: eventID }, (err, seats) => {
+                            if (seats && seats.length > 0) {
+                                seats.forEach(seat => {
+                                    var seatdate = new Date(seat.transactionDate).toLocaleString('en-US', {
+                                        timeZone: 'America/New_York'
+                                    });
+                                    let row = [seat.section, seat.displayPricePerTicket, seat.rows, seat.quantity, seat.deliveryOption, seatdate, "", "", ""];
+                                    data.push(row);
+                                });
+                            }
+                            downloadF(data, res, 'stubhub' + eventID);
+                        })
+                        /////
+                    }
+                })
+
+            });
+
 
         })
     }
