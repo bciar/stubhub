@@ -260,6 +260,14 @@ class mainController {
         })
     }
 
+    getTicketInfo(req, res) {
+        let eventID = req.params.eventID;
+        ticketsModel.find({ eventID: eventID }, (err2, tickets) => {
+            if (err2) res.redirect('/');
+            res.json(tickets);
+        })
+    }
+
     viewEventDetails(req, res) {
         let eventID = req.params.eventID;
         eventsModel.findOne({ eventID: eventID }, (err, event) => {

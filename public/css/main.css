@@ -100,3 +100,7 @@
 .dropdown-item:hover{
   background-color: cadetblue;
 }
+
+.hide{
+  display: none !important;
+}

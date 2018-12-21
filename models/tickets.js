@@ -11,7 +11,14 @@ var ticketsSchema = mongoose.Schema({
   maxTicketPrice: Number,
   averageTicketPrice: Number,
   medianTicketPrice: Number,
-  soldNum: Number
+  soldNum: {
+    type: Number,
+    default: 0
+  },
+  soldVolume: {
+    type: Number,
+    default: 0
+  }
 }, {
   timestamps: {
     createdAt: 'created_at'
