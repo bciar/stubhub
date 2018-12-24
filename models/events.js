@@ -15,6 +15,8 @@ var eventsSchema = mongoose.Schema({
   },
   image: String,
   eventDate: String,
+  sections: [],
+  zones: [],
   pullFrequency: {
     ftype: Number,//1 default, 2 customized
     frequencies: []
