@@ -39,8 +39,8 @@ class mainController {
                                 ftype: 1,
                                 frequencies: []
                             };
-                            newEvent.save((err) => {
-                                updateEventInfo(eventID);
+                            newEvent.save(async (err) => {
+                                await updateEventInfo(eventID);
                                 count++;
                                 if (count == fileRows.length) res.redirect('/');
                             });
@@ -71,7 +71,7 @@ class mainController {
         });
     }
 
-    addsingleEvent(req, res) {
+    async addsingleEvent(req, res) {
         let eventID = req.body.eventID;
         eventsModel.find({ eventID: eventID }, (err, data) => {
             if (data.length == []) {
@@ -82,8 +82,8 @@ class mainController {
                     frequencies: []
                 };
                 //call api to save event information and save tickets
-                newEvent.save((err) => {
-                    updateEventInfo(eventID);
+                newEvent.save(async (err) => {
+                    await updateEventInfo(eventID);
                     res.redirect('/');
                 });
             } else {
@@ -501,10 +501,15 @@ function updateEventInfo(eventID) {
     let nowDateTime = new Date().toLocaleString('en-US', {
         timeZone: 'America/New_York'
     });
-    request.get(process.env.PRODUCT_SERVER_URL + '/getEventInternalDetailsById/' + eventID, (err, response) => {
+    new Promise((resolve) => {
+        request.get(process.env.PRODUCT_SERVER_URL + '/getEventInternalDetailsById/' + eventID, (err, response) => {
+            request.get(process.env.PRODUCT_SERVER_URL + '/saveTicketsById/' + eventID + '?datetime=' + nowDateTime, (err, response) => {
+                resolve();
+            })
+        })
+
     })
-    request.get(process.env.PRODUCT_SERVER_URL + '/saveTicketsById/' + eventID + '?datetime=' + nowDateTime, (err, response) => {
-    })
+
 }
 
 function downloadF(data, res, filename) {
