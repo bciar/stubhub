@@ -38,8 +38,13 @@
             <p>
                 <% var date = new Date(event.eventDate).toLocaleString('en-US', {
                     timeZone: 'America/New_York'
-                });%>
-                <%=date%>
+                });
+                
+                var days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+                var cdate = new Date(event.eventDate);
+                var dayofweek = days[cdate.getDay()];
+                %>
+                <%=dayofweek + ' , ' + date%>
             </p>
         </div>
 
