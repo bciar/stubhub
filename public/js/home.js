@@ -57,7 +57,7 @@ function openSetting(eventID) {
                 freqencies.forEach(row => {
                     let divRow = '<div class="col-md-12"><div class="col-md-3 float-left"><label for="">Start Date</label><input type="text" class="form-control datepicker" name="start_date" value="' + row.start + '" required></div><div class="col-md-3  float-left"><label for="">End Date</label><input type="text" class="form-control datepicker" name="end_date" value="' + row.end + '" required></div><div class="col-md-4  float-left"><label for="">Freqency</label><select name="frequency" id="" class="form-control" required><option value=""></option>';
                     let options = ['10', '20', '30', '60', '120', '360', '720'];
-                    let optionStrings = ['Every 10 mins', 'Every 20 mins', 'Every 30 mins', 'Every 1 hr', 'Every 2 hrs', 'Every 3 hrs', 'Every 12 hrs'];
+                    let optionStrings = ['Every 10 mins', 'Every 20 mins', 'Every 30 mins', 'Every 1 hr', 'Every 2 hrs', 'Every 6 hrs', 'Every 12 hrs'];
                     var optionItems = '';
                     for (let j = 0; j < options.length; j++) {
                         let opt = options[j];
