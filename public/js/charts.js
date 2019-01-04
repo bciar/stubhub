@@ -86,6 +86,7 @@ function drawPredictChart(data) {
 
 $(function () {
     $('#btn-graph').click(() => {
+        $('#prediction-section').addClass('hide');
         if ($('#graph-section').hasClass('hide')) {
             $('#graph-section').removeClass('hide');
         } else {
