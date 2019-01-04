@@ -10,6 +10,7 @@ var stubhubApi = require('../apis/stubhubApi');
 var stubhub = new stubhubApi();
 var cheerio = require('cheerio');
 var request = require('request');
+var PolynomialRegression = require('ml-regression').PolynomialRegression;
 
 class mainController {
     constructor() { }
@@ -263,8 +264,77 @@ class mainController {
     getTicketInfo(req, res) {
         let eventID = req.params.eventID;
         ticketsModel.find({ eventID: eventID }, (err2, tickets) => {
-            if (err2) res.redirect('/');
+            if (err2) res.json({});
             res.json(tickets);
+        })
+    }
+
+    getTicketInfo_Prediction(req, res) {
+        let eventID = req.params.eventID;
+        ticketsModel.find({ eventID: eventID }, (err2, tickets) => {
+            if (err2) res.json({});
+            let timestamps = [];
+            let medianPrices = [];
+            let result = [];
+            tickets.forEach(ticket => {
+                result.push(
+                    {
+                        datetime: ticket.datetime,
+                        medianPrice: ticket.medianTicketPrice,
+                        type: 0
+                    }
+                );
+            });
+            tickets.forEach(ticket => {
+                let date = new Date(ticket.datetime);
+                let timestamp = date.getTime() / 1000;
+                let medianPrice = ticket.medianTicketPrice;
+                timestamps.push(timestamp);
+                medianPrices.push(medianPrice);
+            });
+            if (timestamps.length > 3) {
+                let len = timestamps.length;
+                let delta = timestamps[len - 1] - timestamps[len - 2];
+                let nextTimestamp1 = timestamps[len - 1] + delta;
+                let nextTimestamp2 = nextTimestamp1 + delta;
+                let nextTimestamp3 = nextTimestamp2 + delta;
+                //predict
+                var degree = 5; // setup the maximum degree of the polynomial
+                var regression = new PolynomialRegression(timestamps, medianPrices, degree);
+                let predictPrice1 = regression.predict(nextTimestamp1);
+                let predictPrice2 = regression.predict(nextTimestamp2);
+                let predictPrice3 = regression.predict(nextTimestamp3);
+                result.push(
+                    {
+                        datetime: new Date(nextTimestamp1 * 1000).toLocaleString('en-US', {
+                            timeZone: 'America/New_York'
+                        }),
+                        medianPrice: Math.floor(predictPrice1 * 100) / 100,
+                        type: 1
+                    }
+                );
+                result.push(
+                    {
+                        datetime: new Date(nextTimestamp2 * 1000).toLocaleString('en-US', {
+                            timeZone: 'America/New_York'
+                        }),
+                        medianPrice: Math.floor(predictPrice2 * 100) / 100,
+                        type: 1
+                    }
+                );
+                result.push(
+                    {
+                        datetime: new Date(nextTimestamp3 * 1000).toLocaleString('en-US', {
+                            timeZone: 'America/New_York'
+                        }),
+                        medianPrice: Math.floor(predictPrice3 * 100) / 100,
+                        type: 1
+                    }
+                );
+                res.json(result);
+            } else {
+                res.json(result);
+            }
         })
     }
 

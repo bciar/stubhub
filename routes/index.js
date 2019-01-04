@@ -52,7 +52,7 @@ router.post('/events/remove', isLoggedIn, main.removeEvents);
 router.get('/getEventData/:eventID', isLoggedIn, main.getEventData);
 router.get('/tickets/:eventID', isLoggedIn, main.ticketPage);
 router.get('/getTicketInfo/:eventID', isLoggedIn, main.getTicketInfo);
-
+router.get('/getTicketInfo-Prediction/:eventID', isLoggedIn, main.getTicketInfo_Prediction);
 router.get('/viewEventDetails/:eventID', isLoggedIn, main.viewEventDetails);
 router.get('/viewTicketDetails/:eventID', isLoggedIn, main.viewTicketDetails);
 

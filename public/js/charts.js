@@ -65,12 +65,39 @@ function drawSoldVolume(data) {
     Morris.Line(config);
 }
 
+function drawPredictChart(data) {
+    var config = {
+        data: data,
+        xkey: 'y',
+        ykeys: ['a', 'b'],
+        labels: ['Median Price', 'Predict'],
+        fillOpacity: 0.6,
+        hideHover: 'auto',
+        behaveLikeLine: true,
+        resize: true,
+        pointFillColors: ['#ffffff'],
+        pointStrokeColors: ['black'],
+        lineColors: ['gray', 'red']
+    };
+    config.element = 'chart-prediction';
+    Morris.Line(config);
+}
+
+
 $(function () {
     $('#btn-graph').click(() => {
         if ($('#graph-section').hasClass('hide')) {
             $('#graph-section').removeClass('hide');
         } else {
             $('#graph-section').addClass('hide');
+        }
+    })
+    $('#btn-prediction').click(() => {
+        $('#graph-section').addClass('hide');
+        if ($('#prediction-section').hasClass('hide')) {
+            $('#prediction-section').removeClass('hide');
+        } else {
+            $('#prediction-section').addClass('hide');
         }
     })
     $.ajax({
@@ -102,6 +129,32 @@ $(function () {
             drawPriceChart(data_price);
             drawTotalTickets(data_totaltickets);
             drawSoldVolume(data_soldVolume);
+        }
+    })
+
+    $.ajax({
+        url: '/getTicketInfo-Prediction/' + $('#eventID').val(),
+        method: 'GET',
+        success: function (tickets) {
+            let data_price = [];
+            tickets.forEach(ticket => {
+                var d = new Date(ticket.datetime);
+                var datestring = d.getFullYear() + '-' + (d.getMonth() + 1) + "-" + d.getDate() + " " + d.getHours() + ":" + d.getMinutes();
+                let row_price = {};
+                if (ticket.type == 0) {
+                    row_price = {
+                        y: datestring,
+                        a: ticket.medianPrice,
+                    };
+                } else {
+                    row_price = {
+                        y: datestring,
+                        b: ticket.medianPrice,
+                    };
+                }
+                data_price.push(row_price);
+            });
+            drawPredictChart(data_price);
         }
     })
 });
