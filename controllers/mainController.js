@@ -287,7 +287,7 @@ class mainController {
             });
             tickets.forEach(ticket => {
                 let date = new Date(ticket.datetime);
-                let timestamp = date.getTime() / 1000;
+                let timestamp = date.getTime() / 1000 + 5 * 3600;
                 let medianPrice = ticket.medianTicketPrice;
                 timestamps.push(timestamp);
                 medianPrices.push(medianPrice);
