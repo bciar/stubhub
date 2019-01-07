@@ -115,7 +115,7 @@ class mainController {
                         //add sold seats info
                         data.push([" ", " ", " ", " ", " ", " ", " ", " "]);
                         data.push(["section", "price", "rows", "quantity", "delivery", "transactionDate", " ", " ", " "]);
-                        soldseatsModel.find({ eventID: eventID }, (err, seats) => {
+                        soldseatsModel.find({ eventID: eventID, ticketID: ticket._id }, (err, seats) => {
                             if (seats && seats.length > 0) {
                                 seats.forEach(seat => {
                                     var seatdate = new Date(seat.transactionDate).toLocaleString('en-US', {
