@@ -298,39 +298,46 @@ class mainController {
                 let nextTimestamp1 = timestamps[len - 1] + delta;
                 let nextTimestamp2 = nextTimestamp1 + delta;
                 let nextTimestamp3 = nextTimestamp2 + delta;
-                //predict
-                var degree = 5; // setup the maximum degree of the polynomial
-                var regression = new PolynomialRegression(timestamps, medianPrices, degree);
-                let predictPrice1 = regression.predict(nextTimestamp1);
-                let predictPrice2 = regression.predict(nextTimestamp2);
-                let predictPrice3 = regression.predict(nextTimestamp3);
-                result.push(
-                    {
-                        datetime: new Date(nextTimestamp1 * 1000).toLocaleString('en-US', {
-                            timeZone: 'America/New_York'
-                        }),
-                        medianPrice: Math.floor(predictPrice1 * 100) / 100,
-                        type: 1
-                    }
-                );
-                result.push(
-                    {
-                        datetime: new Date(nextTimestamp2 * 1000).toLocaleString('en-US', {
-                            timeZone: 'America/New_York'
-                        }),
-                        medianPrice: Math.floor(predictPrice2 * 100) / 100,
-                        type: 1
-                    }
-                );
-                result.push(
-                    {
-                        datetime: new Date(nextTimestamp3 * 1000).toLocaleString('en-US', {
-                            timeZone: 'America/New_York'
-                        }),
-                        medianPrice: Math.floor(predictPrice3 * 100) / 100,
-                        type: 1
-                    }
-                );
+                try {
+                    //predict
+                    var degree = 4; // setup the maximum degree of the polynomial
+                    var regression = new PolynomialRegression(timestamps, medianPrices, degree);
+                    let predictPrice1 = regression.predict(nextTimestamp1);
+                    let predictPrice2 = regression.predict(nextTimestamp2);
+                    let predictPrice3 = regression.predict(nextTimestamp3);
+                    result.push(
+                        {
+                            datetime: new Date(nextTimestamp1 * 1000).toLocaleString('en-US', {
+                                timeZone: 'America/New_York'
+                            }),
+                            medianPrice: Math.floor(predictPrice1 * 100) / 100,
+                            type: 1
+                        }
+                    );
+                    result.push(
+                        {
+                            datetime: new Date(nextTimestamp2 * 1000).toLocaleString('en-US', {
+                                timeZone: 'America/New_York'
+                            }),
+                            medianPrice: Math.floor(predictPrice2 * 100) / 100,
+                            type: 1
+                        }
+                    );
+                    result.push(
+                        {
+                            datetime: new Date(nextTimestamp3 * 1000).toLocaleString('en-US', {
+                                timeZone: 'America/New_York'
+                            }),
+                            medianPrice: Math.floor(predictPrice3 * 100) / 100,
+                            type: 1
+                        }
+                    );
+                }
+                catch (e) {
+                    console.log(e)
+                }
+
+
                 res.json(result);
             } else {
                 res.json(result);
