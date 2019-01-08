@@ -77,3 +77,7 @@ function viewSoldSeats(ticketID) {
         }
     })
 }
+
+$(function() {
+    $('#ticketTable').DataTable({ responsive: true });
+})
