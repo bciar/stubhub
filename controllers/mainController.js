@@ -389,6 +389,32 @@ class mainController {
         })
     }
 
+    viewSoldSeatDetailsByFilter(req, res) {
+        let rdata = JSON.parse(req.body.data);
+        let ticketID = rdata.ticketID;
+        let rfilters = rdata.filters;
+        let filters = [];
+        rfilters.forEach(element => {
+            filters.push(parseInt(element, 10));
+        });
+        soldseatsModel.find({ ticketID: ticketID }, (err, seats) => {
+            if (err) {
+                res.json({ status: 'failed', data: [] });
+            }
+            else if (filters.length == 0) {
+                res.json({ status: 'ok', data: seats });
+            } else {
+                let result_data = [];
+                seats.forEach(seat => {
+                    if (filters.includes(seat.sectionId)) {
+                        result_data.push(seat);
+                    }
+                });
+                res.json({ status: 'ok', data: result_data });
+            }
+        })
+    }
+
     setting(req, res) {
         res.render('setting', { message: '' });
     }

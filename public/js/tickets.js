@@ -1,3 +1,6 @@
+var sectionIDs = [];
+var sections = [];
+var selected_ticketID;
 
 function viewActiveSeats(ticketID) {
     $('#seatDetails-div').attr('style', 'display: none;');
@@ -52,6 +55,7 @@ function viewActiveSeats(ticketID) {
 function viewSoldSeats(ticketID) {
     $('#soldseatDetails-div').attr('style', 'display: none;');
     $("#soldseatTable").dataTable().fnDestroy();
+    selected_ticketID = ticketID;
     $.ajax({
         url: '/viewSoldSeatDetails',
         method: 'POST',
@@ -73,11 +77,62 @@ function viewSoldSeats(ticketID) {
                 });
                 $('#soldseatTable-body').html(html);
                 $('#soldseatTable').DataTable({ responsive: true });
+                //multiple search
+                res.data.forEach(seat => {
+                    if (sectionIDs.indexOf(seat.sectionId) < 0) {
+                        sectionIDs.push(seat.sectionId);
+                        sections.push(seat.section);
+                    }
+                });
+                let options = '';
+                for (let i = 0; i < sectionIDs.length; i++) {
+                    options = options + '<option value="' + sectionIDs[i] + '">' + sections[i] + '</option>';
+                };
+                $('#multipleSearch').html(options);
+                //initialize select2
+                $(".select2-multiple").select2({
+                    theme: "bootstrap",
+                    placeholder: "Select section name(s)",
+                    maximumSelectionSize: 10,
+                    containerCssClass: ':all:'
+                });
             }
         }
     })
 }
 
-$(function() {
+function multipleSearchFunc() {
+    let selectedValues = $("#multipleSearch").val();
+    $.ajax({
+        url: '/viewSoldSeatDetailsByFilter',
+        method: 'POST',
+        data: {
+            data: JSON.stringify({
+                filters: selectedValues,
+                ticketID: selected_ticketID
+            })
+        },
+        success: function (res) {
+            if (res.status == 'ok') {
+                $("#soldseatTable").dataTable().fnDestroy();
+                let html = '';
+                let i = 0;
+                res.data.forEach(seat => {
+                    i++;
+                    var cdate = new Date(seat.transactionDate).toLocaleString('en-US', {
+                        timeZone: 'America/New_York'
+                    });
+                    let row = '<tr><td>' + i + '</td><td>' + seat.section + '</td><td>' + seat.displayPricePerTicket + '</td><td>' + seat.rows + '</td><td>' + seat.quantity + '</td><td>' + seat.deliveryOption + '</td><td>' + cdate + '</td></tr>';
+                    html = html + row;
+                });
+                $('#soldseatTable-body').html(html);
+                $('#soldseatTable').DataTable({ responsive: true });
+            }
+        }
+    })
+}
+
+$(function () {
     $('#ticketTable').DataTable({ responsive: true });
+
 })

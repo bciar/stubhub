@@ -58,6 +58,7 @@ router.get('/viewTicketDetails/:eventID', isLoggedIn, main.viewTicketDetails);
 
 router.post('/viewActiveSeatDetails', isLoggedIn, main.viewActiveSeatDetails);
 router.post('/viewSoldSeatDetails', isLoggedIn, main.viewSoldSeatDetails);
+router.post('/viewSoldSeatDetailsByFilter', main.viewSoldSeatDetailsByFilter);
 
 
 

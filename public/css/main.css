@@ -104,3 +104,17 @@
 .hide{
   display: none !important;
 }
+
+.multiple-search-row{
+  float: right;
+  padding: 10px;
+  padding-right: 16px;
+}
+
+.multiple-search-row label {
+  margin-right: 10px;
+}
+
+.multiple-search-row #multipleSearch {
+  width: 500px;
+}
