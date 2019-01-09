@@ -18,12 +18,16 @@ var ticketsSchema = mongoose.Schema({
   soldVolume: {
     type: Number,
     default: 0
+  },
+  pulltype: {
+    type: Number,
+    default: 0
   }
 }, {
-  timestamps: {
-    createdAt: 'created_at'
-  }
-});
+    timestamps: {
+      createdAt: 'created_at'
+    }
+  });
 
 // create the model for transaction and expose it to our app
 module.exports = mongoose.model('ticketsModel', ticketsSchema);
