@@ -133,6 +133,24 @@ function removeSelectedEvents() {
 
 }
 
+function gotoComparePage() {
+    let checkboxItems = $(".checkbox");
+    let eventIDs = [];
+    for (let i = 0; i < checkboxItems.length; i++) {
+        let row = $(checkboxItems[i]);
+        if (row.prop('checked') == true) {
+            eventIDs.push(row.attr('data-eventID'));
+        }
+    };
+    if (eventIDs.length > 0) {
+        let data = {
+            eventIDs: eventIDs
+        };
+        let url = '/comparePage?eventIDs=' + JSON.stringify(data);
+        location.href = url;
+    }
+}
+
 function editSelectedFrequency() {
     let checkboxItems = $(".checkbox");
     let eventIDs = [];
@@ -167,8 +185,8 @@ function openNewTab() {
     };
     eventIDs.forEach(eventID => {
         window.open(
-            '/tickets/'+eventID,
-            '_blank' 
-          );
+            '/tickets/' + eventID,
+            '_blank'
+        );
     });
 }

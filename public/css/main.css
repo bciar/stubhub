@@ -118,3 +118,7 @@
 .multiple-search-row #multipleSearch {
   width: 500px;
 }
+
+#compare-detail p{
+  width: 100%;
+}

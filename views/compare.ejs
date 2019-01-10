@@ -1,0 +1,86 @@
+<% layout('./layout/app') -%>
+<div class="row">
+    <a href="/">Go back to event page</a>
+</div>
+
+<div class="row mt-5 mb-4" id="compare-detail">
+    <p><b>Compare of events: </b><i>
+            <%  for(let i = 0; i< eventIDs.length ; i++) { %>
+            <%=eventIDs[i] + ' '%>
+            <% } %>
+        </i>
+    </p>
+    <p>
+        <b>Event dates:</b>
+    </p>
+    <% for(let i = 0; i< eventData.length; i++) { var cdate = new Date(eventData[i].eventDate).toLocaleString('en-US', {
+        timeZone: 'America/New_York'
+    }); %>
+        <p><%=eventData[i].eventID + ': ' + cdate%></p>
+    <% } %>
+</div>
+
+<div class="row">
+    <table class="table table-bordered table-responsive text-center">
+        <tbody>
+            <tr>
+                <td></td>
+                <% for(let i = 0; i< data.length; i++) { %>
+                <td colspan="<%=data[i].events.length%>">
+                    <%=data[i].datetime.replace(', 7:00:00 PM', '').trim()%>
+                </td>
+                <% } %>
+            </tr>
+            <tr>
+                <td></td>
+                <% for(let i = 0; i< data.length; i++) { 
+                    for(let j = 0 ; j< data[i].events.length; j++) {    
+                %>
+                <td>
+                    <%=data[i].events[j].eventID%>
+                </td>
+                <% } } %>
+            </tr>
+            <tr>
+                <td>Total Tickets</td>
+                <% for(let i = 0; i< data.length; i++) { 
+                    for(let j = 0 ; j< data[i].events.length; j++) {    
+                %>
+                <td>
+                    <%=(data[i].events[j].ticket != null) ? data[i].events[j].ticket.totalTickets : ''%>
+                </td>
+                <% } } %>
+            </tr>
+            <tr>
+                <td>Min Price(2 pack)</td>
+                <% for(let i = 0; i< data.length; i++) { 
+                        for(let j = 0 ; j< data[i].events.length; j++) {    
+                    %>
+                <td>
+                    <%=(data[i].events[j].ticket != null) ? data[i].events[j].ticket.minTicketPrice : ''%>
+                </td>
+                <% } } %>
+            </tr>
+            <tr>
+                <td>Sold Tickets</td>
+                <% for(let i = 0; i< data.length; i++) { 
+                            for(let j = 0 ; j< data[i].events.length; j++) {    
+                        %>
+                <td>
+                    <%=(data[i].events[j].ticket != null) ? (i > 0  && data[i-1].events[j].ticket != null) ? data[i].events[j].ticket.soldNum - data[i-1].events[j].ticket.soldNum :  data[i].events[j].ticket.soldNum : ''%>
+                </td>
+                <% } } %>
+            </tr>
+            <tr>
+                <td>Sold Volume</td>
+                <% for(let i = 0; i< data.length; i++) { 
+                                for(let j = 0 ; j< data[i].events.length; j++) {    
+                            %>
+                <td>
+                    <%=(data[i].events[j].ticket != null) ? (i > 0  && data[i-1].events[j].ticket != null) ? data[i].events[j].ticket.soldVolume - data[i-1].events[j].ticket.soldVolume :  data[i].events[j].ticket.soldVolume : ''%>
+                </td>
+                <% } } %>
+            </tr>
+        </tbody>
+    </table>
+</div>
