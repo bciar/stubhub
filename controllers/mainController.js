@@ -662,8 +662,6 @@ function updateEventInfo(eventID) {
     });
     new Promise((resolve) => {
         request.get(process.env.PRODUCT_SERVER_URL + '/getEventInternalDetailsById/' + eventID, (err, response) => {
-            console.log('-----sssss-------')
-            console.log(response.body)
             if (response.body == 'ok') {
                 request.get(process.env.PRODUCT_SERVER_URL + '/saveTicketsById/' + eventID + '?datetime=' + nowDateTime, (err, response) => {
                     resolve();
