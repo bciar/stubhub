@@ -32,19 +32,11 @@ class mainController {
             .on("end", function () {
                 let count = 0;
                 fileRows.forEach(eventID => {
-                    eventsModel.find({ eventID: eventID }, (err, data) => {
+                    eventsModel.find({ eventID: eventID }, async (err, data) => {
                         if (data.length == []) {
-                            let newEvent = new eventsModel();
-                            newEvent.eventID = eventID;
-                            newEvent.pullFrequency = {
-                                ftype: 1,
-                                frequencies: []
-                            };
-                            newEvent.save(async (err) => {
-                                await updateEventInfo(eventID);
-                                count++;
-                                if (count == fileRows.length) res.redirect('/');
-                            });
+                            await updateEventInfo(eventID);
+                            count++;
+                            if (count == fileRows.length) res.redirect('/');
                         } else {
                             count++;
                             if (count == fileRows.length) res.redirect('/');
@@ -146,19 +138,11 @@ class mainController {
 
     async addsingleEvent(req, res) {
         let eventID = req.body.eventID;
-        eventsModel.find({ eventID: eventID }, (err, data) => {
+        eventsModel.find({ eventID: eventID }, async (err, data) => {
             if (data.length == []) {
-                let newEvent = new eventsModel();
-                newEvent.eventID = eventID;
-                newEvent.pullFrequency = {
-                    ftype: 1,
-                    frequencies: []
-                };
                 //call api to save event information and save tickets
-                newEvent.save(async (err) => {
-                    await updateEventInfo(eventID);
-                    res.redirect('/');
-                });
+                await updateEventInfo(eventID);
+                res.redirect('/');
             } else {
                 res.redirect('/');
             }
