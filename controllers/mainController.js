@@ -136,6 +136,71 @@ class mainController {
 
     }
 
+    comparePageJSON(req, res) {
+        let data = JSON.parse(req.query.eventIDs);
+        let eventIDs = data.eventIDs;
+        let eventDatas = [];
+        let i = 0;
+        let index = 0;
+        let dates = [];
+        eventIDs.forEach(eventID => {
+            ticketsModel.find({ eventID, eventID }, (err, ticketData) => {
+                i++;
+                // eventDatas.push(ticketData);
+                ticketData.forEach(ticket => {
+                    if (!dates.includes(ticket.datetime) && ticket.datetime.includes('7:00:00 PM')) {
+                        dates.push(ticket.datetime);
+                    }
+                    eventDatas.push(ticket);
+                });
+                if (i == eventIDs.length) {
+                    //sort dates
+                    for (let j = 0; j < dates.length; j++) {
+                        for (let k = j + 1; k < dates.length; k++) {
+                            let d1 = new Date(dates[j]);
+                            let d2 = new Date(dates[k]);
+                            if (d1 > d2) {
+                                let tmp = dates[k];
+                                dates[k] = dates[j];
+                                dates[j] = tmp;
+                            }
+                        }
+                    }
+                    //filter data eventdatas
+                    let result_data = [];
+                    dates.forEach(rdate => {
+                        let result_item = {
+                            datetime: rdate,
+                            events: []
+                        };
+                        eventIDs.forEach(reventID => {
+                            let result_item_row = {
+                                eventID: reventID,
+                                ticket: null
+                            };
+                            eventDatas.forEach(reventData => {
+                                if (reventData.datetime == rdate && reventData.eventID == reventID) {
+                                    result_item_row.ticket = reventData;
+                                }
+                            });
+                            result_item.events.push(result_item_row);
+                        });
+                        result_data.push(result_item);
+                    });
+                    // console.log(result_data)
+                    //get event data
+                    res.json({ data: result_data, eventIDs: eventIDs });
+
+                }
+
+            })
+        });
+    }
+
+    predictPage(req, res) {
+        res.render('predict');
+    }
+
     async addsingleEvent(req, res) {
         let eventID = req.body.eventID;
         eventsModel.find({ eventID: eventID }, async (err, data) => {

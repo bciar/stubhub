@@ -60,10 +60,10 @@
                 <%=data[i].events[j].eventID%>
             </td>
             <td>
-                <%=(data[i].events[j].ticket != null) ? data[i].events[j].ticket.totalTickets : ''%>
+                <%=(data[i].events[j].ticket != null && data[i].events[j].ticket.totalTickets) ? data[i].events[j].ticket.totalTickets : ''%>
             </td>
             <td>
-                <%=(data[i].events[j].ticket != null) ? data[i].events[j].ticket.minTicketPrice : ''%>
+                <%=(data[i].events[j].ticket != null && data[i].events[j].ticket.minTicketPrice) ? data[i].events[j].ticket.minTicketPrice : ''%>
             </td>
             <td>
                 <%=(data[i].events[j].ticket != null) ? (i > 0  && data[i-1].events[j].ticket != null) ? data[i].events[j].ticket.soldNum - data[i-1].events[j].ticket.soldNum :  data[i].events[j].ticket.soldNum : ''%>
@@ -74,65 +74,33 @@
         </tr>
         <% } } %>
 
-        <!-- <tbody>
-            <tr>
-                <td></td>
-                <% for(let i = 0; i< data.length; i++) { %>
-                <td colspan="<%=data[i].events.length%>">
-                    <%=data[i].datetime.replace(', 7:00:00 PM', '').trim()%>
-                </td>
-                <% } %>
-            </tr>
-            <tr>
-                <td></td>
-                <% for(let i = 0; i< data.length; i++) { 
-                    for(let j = 0 ; j< data[i].events.length; j++) {    
-                %>
-                <td>
-                    <%=data[i].events[j].eventID%>
-                </td>
-                <% } } %>
-            </tr>
-            <tr>
-                <td>Total Tickets</td>
-                <% for(let i = 0; i< data.length; i++) { 
-                    for(let j = 0 ; j< data[i].events.length; j++) {    
-                %>
-                <td>
-                    <%=(data[i].events[j].ticket != null) ? data[i].events[j].ticket.totalTickets : ''%>
-                </td>
-                <% } } %>
-            </tr>
-            <tr>
-                <td>Min Price(2 pack)</td>
-                <% for(let i = 0; i< data.length; i++) { 
-                        for(let j = 0 ; j< data[i].events.length; j++) {    
-                    %>
-                <td>
-                    <%=(data[i].events[j].ticket != null) ? data[i].events[j].ticket.minTicketPrice : ''%>
-                </td>
-                <% } } %>
-            </tr>
-            <tr>
-                <td>Sold Tickets</td>
-                <% for(let i = 0; i< data.length; i++) { 
-                            for(let j = 0 ; j< data[i].events.length; j++) {    
-                        %>
-                <td>
-                    <%=(data[i].events[j].ticket != null) ? (i > 0  && data[i-1].events[j].ticket != null) ? data[i].events[j].ticket.soldNum - data[i-1].events[j].ticket.soldNum :  data[i].events[j].ticket.soldNum : ''%>
-                </td>
-                <% } } %>
-            </tr>
-            <tr>
-                <td>Sold Volume</td>
-                <% for(let i = 0; i< data.length; i++) { 
-                                for(let j = 0 ; j< data[i].events.length; j++) {    
-                            %>
-                <td>
-                    <%=(data[i].events[j].ticket != null) ? (i > 0  && data[i-1].events[j].ticket != null) ? data[i].events[j].ticket.soldVolume - data[i-1].events[j].ticket.soldVolume :  data[i].events[j].ticket.soldVolume : ''%>
-                </td>
-                <% } } %>
-            </tr>
-        </tbody> -->
     </table>
 </div>
+
+<div class="row mt-5 mb-5">
+    <p>Total Tickets</p>
+    <div class="" id="chart-tt" style="height: 200px;width: 100%;">
+    </div>
+</div>
+
+<div class="row mt-5 mb-5">
+    <p>Min Price</p>
+    <div class="" id="chart-mp" style="height: 200px;width: 100%;">
+    </div>
+</div>
+
+<div class="row mt-5 mb-5">
+    <p>Sold Tickets</p>
+    <div class="" id="chart-st" style="height: 200px;width: 100%;">
+    </div>
+</div>
+
+<div class="row mt-5 mb-5">
+    <p>Sold Volume</p>
+    <div class="" id="chart-sv" style="height: 200px;width: 100%;">
+    </div>
+</div>
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/raphael/2.1.0/raphael-min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/morris.js/0.5.1/morris.min.js"></script>
+<script src="/js/compare.js"></script>

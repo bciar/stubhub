@@ -45,6 +45,8 @@ router.post('/event/addSingle', isLoggedIn, main.addsingleEvent);
 
 router.get('/event/:eventID/exportcsv', isLoggedIn, main.exportcsvSingle);
 router.get('/comparePage', isLoggedIn, main.comparePage);
+router.get('/comparePageJSON', isLoggedIn, main.comparePageJSON);
+router.get('/predictPage', isLoggedIn, main.predictPage);
 
 router.post('/event/:eventID/addFrequency', isLoggedIn, main.addFrequency);
 router.post('/event/addFrequencies', isLoggedIn, main.addFrequencies);
