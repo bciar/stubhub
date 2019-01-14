@@ -6,7 +6,6 @@ $(() => {
         method: 'GET',
         success: function (res) {
             let data = res.data;
-            console.log(data)
             let graphData_tt = [];
             let graphData_mp = [];
             let graphData_st = [];

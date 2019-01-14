@@ -67,71 +67,111 @@ class mainController {
     comparePage(req, res) {
         let data = JSON.parse(req.query.eventIDs);
         let eventIDs = data.eventIDs;
+        let ticketDatas = [];
         let eventDatas = [];
         let i = 0;
         let index = 0;
         let dates = [];
         eventIDs.forEach(eventID => {
-            ticketsModel.find({ eventID, eventID }, (err, ticketData) => {
-                i++;
-                // eventDatas.push(ticketData);
-                ticketData.forEach(ticket => {
-                    if (!dates.includes(ticket.datetime) && ticket.datetime.includes('7:00:00 PM')) {
-                        dates.push(ticket.datetime);
-                    }
-                    eventDatas.push(ticket);
-                });
-                if (i == eventIDs.length) {
-                    //sort dates
-                    for (let j = 0; j < dates.length; j++) {
-                        for (let k = j + 1; k < dates.length; k++) {
-                            let d1 = new Date(dates[j]);
-                            let d2 = new Date(dates[k]);
-                            if (d1 > d2) {
-                                let tmp = dates[k];
-                                dates[k] = dates[j];
-                                dates[j] = tmp;
+            eventsModel.findOne({ eventID, eventID }, (err, eventData) => {
+                eventDatas.push(eventData);
+                ticketsModel.find({ eventID, eventID }, (err, ticketData) => {
+                    i++;
+                    // ticketDatas.push(ticketData);
+                    ticketData.eventDate = eventData.eventDate;
+                    ticketData.forEach(ticket => {
+                        if (!dates.includes(ticket.datetime) && ticket.datetime.includes('7:00:00 PM')) {
+                            dates.push(ticket.datetime);
+                        }
+                        ticket.eventDate = eventData.eventDate;
+                        ticketDatas.push(ticket);
+                    });
+                    if (i == eventIDs.length) {
+                        //sort dates
+                        for (let j = 0; j < dates.length; j++) {
+                            for (let k = j + 1; k < dates.length; k++) {
+                                let d1 = new Date(dates[j]);
+                                let d2 = new Date(dates[k]);
+                                if (d1 > d2) {
+                                    let tmp = dates[k];
+                                    dates[k] = dates[j];
+                                    dates[j] = tmp;
+                                }
                             }
                         }
-                    }
-                    //filter data eventdatas
-                    let result_data = [];
-                    dates.forEach(rdate => {
-                        let result_item = {
-                            datetime: rdate,
-                            events: []
-                        };
-                        eventIDs.forEach(reventID => {
-                            let result_item_row = {
-                                eventID: reventID,
-                                ticket: null
+                        //filter data ticketDatas
+                        let result_data = [];
+                        dates.forEach(rdate => {
+                            let result_item = {
+                                datetime: rdate,
+                                events: []
                             };
+                            eventIDs.forEach(reventID => {
+                                let result_item_row = {
+                                    eventID: reventID,
+                                    ticket: null
+                                };
+                                ticketDatas.forEach(reventData => {
+                                    if (reventData.datetime == rdate && reventData.eventID == reventID) {
+                                        result_item_row.ticket = reventData;
+                                    }
+                                });
+                                result_item.events.push(result_item_row);
+                            });
+                            result_data.push(result_item);
+                        });
+
+                        //calc days to event data
+                        
+                        let daysArray = [];
+                        dates.forEach(rdate => {
                             eventDatas.forEach(reventData => {
-                                if (reventData.datetime == rdate && reventData.eventID == reventID) {
-                                    result_item_row.ticket = reventData;
+                                let date1 = new Date(reventData.eventDate);
+                                let date2 = new Date(rdate);
+                                let timeDiff = Math.abs(date2.getTime() - date1.getTime());
+                                let diffDays = Math.floor(timeDiff / (1000 * 3600 * 24));
+                                if (!daysArray.includes(diffDays)) {
+                                    daysArray.push(diffDays);
                                 }
                             });
-                            result_item.events.push(result_item_row);
                         });
-                        result_data.push(result_item);
-                    });
-                    // console.log(result_data)
-                    //get event data
-                    let event_i = 0;
-                    let eventData = [];
-                    eventIDs.forEach(neventID => {
-                        eventsModel.findOne({ eventID: neventID }, (err, event) => {
-                            event_i++;
-                            eventData.push(event);
-                            if (event_i == eventIDs.length) {
-                                res.render('compare', { data: result_data, eventIDs: eventIDs, eventData: eventData });
-                            }
-                        })
-                    });
+                        //sort daysArray
+                        daysArray.sort();
+                        daysArray.reverse();
 
-                }
+                        let result_days_data = [];
+                        daysArray.forEach(days => {
+                            let result_item = {
+                                days: days,
+                                events: []
+                            };
+                            eventIDs.forEach(reventID => {
+                                let result_item_row = {
+                                    eventID: reventID,
+                                    ticket: null
+                                };
+                                ticketDatas.forEach(reventData => {
+                                    //calc days
+                                    let date1 = new Date(reventData.eventDate);
+                                    let date2 = new Date(reventData.datetime);
+                                    let timeDiff = Math.abs(date2.getTime() - date1.getTime());
+                                    let diffDays = Math.floor(timeDiff / (1000 * 3600 * 24));
+                                    if (diffDays == days && reventData.eventID == reventID) {
+                                        result_item_row.ticket = reventData;
+                                    }
+                                });
+                                result_item.events.push(result_item_row);
+                            });
+                            result_days_data.push(result_item);
+                        });
 
+                        res.render('compare', { data: result_data, eventIDs: eventIDs, eventData: eventDatas, days_data: result_days_data });
+
+                    }
+
+                })
             })
+
         });
 
     }
