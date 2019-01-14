@@ -147,7 +147,7 @@ function gotoComparePage() {
             eventIDs: eventIDs
         };
         let url = '/comparePage?eventIDs=' + JSON.stringify(data);
-        location.href = url;
+        window.open(url,'_blank');
     }
 }
 
@@ -165,7 +165,7 @@ function gotoPredictPage() {
             eventIDs: eventIDs
         };
         let url = '/predictPage?eventIDs=' + JSON.stringify(data);
-        location.href = url;
+        window.open(url,'_blank');
     }
 }
 
