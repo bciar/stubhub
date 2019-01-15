@@ -107,6 +107,29 @@ $(function () {
         checkedAll = !checkedAll;
         $('.checkbox').prop('checked', checkedAll);
     })
+
+    //add event IDs in multiple search
+    $.ajax({
+        url: '/getEventIDs',
+        method: 'GET',
+        success: function (res) {
+            if (res.eventIDs) {
+                let eventIDs = res.eventIDs;
+                let options = '';
+                for (let i = 0; i < eventIDs.length; i++) {
+                    options = options + '<option value="' + eventIDs[i] + '">' + eventIDs[i] + '</option>';
+                };
+                $('#multipleSearch').html(options);
+                //initialize select2
+                $(".select2-multiple").select2({
+                    theme: "bootstrap",
+                    placeholder: "Select eventID(s)",
+                    maximumSelectionSize: 10,
+                    containerCssClass: ':all:'
+                });
+            }
+        }
+    })
 })
 
 function removeSelectedEvents() {
@@ -147,7 +170,7 @@ function gotoComparePage() {
             eventIDs: eventIDs
         };
         let url = '/comparePage?eventIDs=' + JSON.stringify(data);
-        window.open(url,'_blank');
+        window.open(url, '_blank');
     }
 }
 
@@ -165,7 +188,7 @@ function gotoPredictPage() {
             eventIDs: eventIDs
         };
         let url = '/predictPage?eventIDs=' + JSON.stringify(data);
-        window.open(url,'_blank');
+        window.open(url, '_blank');
     }
 }
 

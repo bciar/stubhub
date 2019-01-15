@@ -43,6 +43,9 @@ function isLoggedIn(req, res, next) {
 router.post('/events/uploadcsv', upload.single('file'), main.uploadcsv);
 router.post('/event/addSingle', isLoggedIn, main.addsingleEvent);
 
+router.get('/getEventIDs', isLoggedIn, main.getEventIDs);
+router.get('/searchResult', isLoggedIn, main.searchResult)
+
 router.get('/event/:eventID/exportcsv', isLoggedIn, main.exportcsvSingle);
 router.get('/comparePage', isLoggedIn, main.comparePage);
 router.get('/comparePageJSON', isLoggedIn, main.comparePageJSON);

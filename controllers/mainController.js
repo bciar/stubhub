@@ -122,7 +122,7 @@ class mainController {
                         });
 
                         //calc days to event data
-                        
+
                         let daysArray = [];
                         dates.forEach(rdate => {
                             eventDatas.forEach(reventData => {
@@ -252,6 +252,32 @@ class mainController {
                 res.redirect('/');
             }
         })
+    }
+
+    getEventIDs(req, res) {
+        eventsModel.find({}, (err, events) => {
+            let eventIDs = [];
+            events.forEach(event => {
+                eventIDs.push(event.eventID);
+            });
+            res.json({ eventIDs: eventIDs });
+        })
+    }
+
+    searchResult(req, res) {
+        let eventIDs = req.query.eventID;
+        let i = 0;
+        let result = [];
+        eventIDs.forEach(eventID => {
+            eventsModel.findOne({ eventID: eventID }, (err, event) => {
+                i++;
+                result.push(event);
+                if (i == eventIDs.length) {
+                    res.render('home', { events: result });
+                }
+            })
+        });
+
     }
 
     exportcsvSingle(req, res) {
