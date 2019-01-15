@@ -268,16 +268,21 @@ class mainController {
         let eventIDs = req.query.eventID;
         let i = 0;
         let result = [];
-        eventIDs.forEach(eventID => {
-            eventsModel.findOne({ eventID: eventID }, (err, event) => {
-                i++;
-                result.push(event);
-                if (i == eventIDs.length) {
-                    res.render('home', { events: result });
-                }
+        if (eventIDs) {
+            eventIDs.forEach(eventID => {
+                eventsModel.findOne({ eventID: eventID }, (err, event) => {
+                    i++;
+                    result.push(event);
+                    if (i == eventIDs.length) {
+                        res.render('home', { events: result });
+                    }
+                })
+            });
+        } else {
+            eventsModel.find({}, (err, data) => {
+                res.render('home', { events: data });
             })
-        });
-
+        }
     }
 
     exportcsvSingle(req, res) {
